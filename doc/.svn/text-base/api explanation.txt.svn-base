@@ -1,0 +1,46 @@
+API
+
+OBSERVATION :=
+{
+	"id": ID de l'observation dans la base de données locale (PAS UTILE!),
+	"user": ID de l'utililisateur qui a envoyé cette observation,
+	"timestamp": ?????,
+	"geolocation": ?????,
+	"plantSize": taille de la plante observée,
+	"commentary": commentaire de l'utilisateur sur cette observation,
+	"photos": liste de PHOTOs quels appartiennent à cette observation
+}
+
+PHOTO :=
+{
+	"obsId": ID de l'observation dans la base de données locale (PAS UTILE!),
+	"remoteDir": premier partie d'URL de source,
+	"remoteFilename": deuxième partie d'URL de source (le nom du fichier),
+	"localDir": premier partie du chemin local du fichier,
+	"localFilename": deuxième partie du chemin local (le nom du fichier),
+	"depositTimestamp": le temps quand la photo a été reçu par mail,
+	"userTimestamp": le temps quand la photo a été prise selon l'utilisateur,
+	"exifTimestamp": le temps extrait de données EXIF du image,
+	"exifGeolocation": la GEOLOCATION ou la photo a été prise extraite de données EXIF,
+	"rois": liste de ROI de cette photo
+}
+
+ROI :=
+{
+	"rectangle": le RECTANGLE indiquant ou est posé cette zone d'interet sur la photo,
+	"tag": tag associe à cette zone
+}
+
+GEOLOCATION :=
+{
+	"latitude": latitude geographique,
+	"longitude": longitude geographique
+}
+
+RECTANGLE :=
+{
+	"left": gauche,
+	"top": haut,
+	"right": droite,
+	"bottom": bas
+}

@@ -1,0 +1,84 @@
+{
+	
+	"user":"philippemlaroche@gmail.com",
+	"timestamp":null,
+	"geolocation":{"latitude":0,"longitude":0},
+	"plantSize":null,
+	"commentary":null,
+	"photos":
+	[
+		{
+			
+			"remoteDir":"http://apimedia.iherbarium.net/fromapi/",
+			"remoteFilename":"bindata1333377584img234.jpg",
+			"localDir":null,
+			"localFilename":null,
+			
+			"userTimestamp":null,
+			"exifTimestamp":1304848594,
+			
+			"rois":
+			[
+				{
+					"rectangle":{"left":0.02,"top":0.02,"right":0.98,"bottom":0.98},
+					"tag":"fleur"
+				}
+			]
+		},
+		
+		{
+			"obsId":"148",
+			"remoteDir":"http:\\/\\/boiteauxlettres.iherbarium.fr\\/data\\/",
+			"remoteFilename":"photo_1305540047_355659105.jpg",
+			"localDir":null,
+			"localFilename":null,
+			"depositTimestamp":"1305124029",
+			"userTimestamp":null,
+			"exifTimestamp":1304848520,
+			"exifGeolocation":{"latitude":48.891333333333,"longitude":2.3883333333333},
+			"rois":
+			[
+				{
+					"rectangle":{"left":0.05,"top":0.05,"right":0.95,"bottom":0.95},
+					"tag":"feulle"
+				}
+			]
+		},
+		
+		{
+			"obsId":"148",
+			"remoteDir":"http:\\/\\/boiteauxlettres.iherbarium.fr\\/data\\/",
+			"remoteFilename":"photo_1305540047_617365069.jpg",
+			"localDir":null,
+			"localFilename":null,
+			"depositTimestamp":"1305124053",
+			"userTimestamp":null,
+			"exifTimestamp":1304848493,
+			"exifGeolocation":{"latitude":48.891333333333,"longitude":2.3883333333333},
+			"rois":
+			[
+				{
+					"rectangle":{"left":0.05,"top":0.05,"right":0.95,"bottom":0.95},
+					"tag":"tige"
+				}
+			]
+		}
+		
+	],
+	"medias":
+	[
+		{
+			
+			"remoteDir":"http://apimedia.iherbarium.net/fromapi/",
+			"remoteFilename":"bindata1333377584img234.avi",
+			"localDir":null,
+			"localFilename":null,
+			
+			"userTimestamp":null,
+			"exifTimestamp":1304848594,
+			
+		}
+		
+	]
+	
+}
