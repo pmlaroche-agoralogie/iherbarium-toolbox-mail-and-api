@@ -43,7 +43,6 @@ $authorized_ext = array('jpeg','jpg','png','mpo','avi','mpg','raw','mp3');
 $debug = 0;
 $mediapath = "fromapi/";
 $response['error']="";
-
 	
 //verify the two parameters are given (GET parameters are for debbuging purpose)
 if(isset($_GET['information'])) $information = $_GET['information'];
@@ -96,6 +95,7 @@ if($response['error'] == "")
 	}
 
 if($response['error'] == "")unset($response['error'] );
+
 echo json_encode($response);	
-file_put_contents ($mediapath."last_response", json_encode($response));
+//file_put_contents ($mediapath."last_response", json_encode($response));
 ?>
