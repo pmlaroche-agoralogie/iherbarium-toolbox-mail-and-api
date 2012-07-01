@@ -97,5 +97,5 @@ if($response['error'] == "")
 if($response['error'] == "")unset($response['error'] );
 
 echo json_encode($response);	
-//file_put_contents ($mediapath."last_response", json_encode($response));
+file_put_contents ($mediapath."last_response", json_encode($response));
 ?>
