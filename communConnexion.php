@@ -12,7 +12,7 @@ function db_conform_global($s)
 
 function bd_connect(){
   //$serveur = mysql_connect("localhost","_SHELL_REPLACED_USER_TEST","_SHELL_REPLACED_PWD_TEST"); // TEST
-  $serveur = mysql_connect("localhost","_SHELL_REPLACED_USER_PRODUCTION","_SHELL_REPLACED_PWD_PROD"); // PRODUCTION
+  $serveur = mysql_connect("localhost","_SHELL_REPLACED_USER_PROD","_SHELL_REPLACED_PWD_PROD"); // PRODUCTION
   if (!$serveur)
     {
       if($debug_level>0)echo mysql_error();
