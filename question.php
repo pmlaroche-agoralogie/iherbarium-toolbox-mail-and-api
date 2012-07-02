@@ -290,6 +290,8 @@ class QuestionView {
     $options = array_merge($this->defaultOptions, $options);
     if($_SERVER['REMOTE_ADDR']=='94.23.195.65')
 	$xmlgeneration = 1; else $xmlgeneration = 0;
+//no more XML 
+$xmlgeneration = 0;
     $content = '';
 
     // iHerbarium logo.
@@ -405,6 +407,8 @@ if($xmlgeneration==0)
 
 /* ELGG TEST if($_SERVER['REMOTE_ADDR']=='94.23.195.65')
         $xmlgeneration = 1; else $xmlgeneration = 0;*/
+//no more XML on the website
+$xmlgeneration = 0;
 
     $content = "";
 
