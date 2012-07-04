@@ -290,8 +290,6 @@ class QuestionView {
     $options = array_merge($this->defaultOptions, $options);
     if($_SERVER['REMOTE_ADDR']=='94.23.195.65')
 	$xmlgeneration = 1; else $xmlgeneration = 0;
-//no more XML 
-$xmlgeneration = 0;
     $content = '';
 
     // iHerbarium logo.
@@ -375,6 +373,17 @@ else
       else
 	$referrant = "";
     }
+    // Source (registered user)
+    if(isset($_GET['answeringuser']))
+      //first call from the "help" page
+      $source = $_GET['answeringuser'];
+    else                             
+      $source = "network";
+      
+    //folowing call from a submited form
+    if(isset($_POST['source']))
+      $source = $_POST['source'];
+      
 if($xmlgeneration==0) 
     $content .=
       '<form  id="questionForm' . $q->getAskLog()->id . '" method="post" action="?thisIsAnswer=1" enctype="multipart/form-data">' .
@@ -382,7 +391,8 @@ if($xmlgeneration==0)
       '<input type="hidden" name="questionId"   value=\'' . $q->getId() . '\' />' .
       '<input type="hidden" name="context"      value="' . $roi->id . '">' .
       '<input type="hidden" name="askId"        value="' . $q->getAskLog()->id . '" />' .
-     '<input type="hidden" name="referrant" 	value="'.$referrant.'">'.      
+      '<input type="hidden" name="referrant" 	value="'.$referrant.'">'.      
+      '<input type="hidden" name="source"     value="'.$source.'">'.
       '<input type="hidden" name="answerValue"  value="noAnswer" id="hiddenAnswer' . $q->getAskLog()->id . '" />' .
 
       '</form>';
@@ -405,10 +415,8 @@ if($xmlgeneration==0)
 
   private function viewChoice(ChoiceI $choice, TypoherbariumSkin $x, $askId) {
 
-/* ELGG TEST if($_SERVER['REMOTE_ADDR']=='94.23.195.65')
-        $xmlgeneration = 1; else $xmlgeneration = 0;*/
-//no more XML on the website
-$xmlgeneration = 0;
+if($_SERVER['REMOTE_ADDR']=='94.23.195.65')
+        $xmlgeneration = 1; else $xmlgeneration = 0;
 
     $content = "";
 
@@ -507,12 +515,6 @@ class AnswerHandler {
     // IP
     $ip = $_SERVER['REMOTE_ADDR'];
 
-    // Source
-    if(isset($_GET['answeringUser']))
-      $source = $_GET['answeringUser'];
-    else                             
-      $source = "network"; 
-
     // Referrant
     if(isset($_POST['referrant']))
       $referrant = $_POST['referrant'];
@@ -522,7 +524,13 @@ class AnswerHandler {
       else
 	$referrant = "";
     }
-    
+   
+   // reference of registered user
+    if(isset($_POST['source']))
+      $source = $_POST['source'];
+    else                             
+      $source = "na"; 
+ 
     // Prepare the Answer
     $answer = new TypoherbariumROIAnswer();
 
