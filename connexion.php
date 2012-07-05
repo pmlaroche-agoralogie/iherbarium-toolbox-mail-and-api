@@ -2,11 +2,10 @@
 namespace iHerbarium; 
 $debug_level=0;
 include("communConnexion.php");
-$_GET = db_conform_global($_GET);
 $tableau_observation = array();
 $tab_resultat = array();
 	bd_connect();
-	
+$_GET = escape_sql_array($_GET);	
         $mot_de_passe="select password
 	from fe_users where username = ".$_GET['user']. " ";
 	$resultat= mysql_query($mot_de_passe)or die ();

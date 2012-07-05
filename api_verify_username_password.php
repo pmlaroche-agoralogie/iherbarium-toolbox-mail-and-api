@@ -21,8 +21,6 @@ error -> an error text, giving hints about the problem
 namespace iHerbarium;
 
 include("communConnexion.php");
-$_GET = db_conform_global($_GET);
-$_POST = db_conform_global($_POST);
 
 function getFileExtension($fileName)
 {
@@ -60,6 +58,8 @@ if($response['error'] == "")
 		else
 		{
 		  bd_connect();
+$_GET = escape_sql_array($_GET);
+$_POST = escape_sql_array($_POST);
 		$sql_mot_de_passe="SELECT password FROM  `fe_users`  WHERE  `username` = '".$call_parameters->username."' ;";
 		$resultat = mysql_query($sql_mot_de_passe) or die ($sql_mot_de_passe);
 		if(mysql_num_rows($resultat)<1)
