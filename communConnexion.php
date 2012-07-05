@@ -1,13 +1,15 @@
 <?php
 namespace iHerbarium;
 
-function db_conform_global($s) 
-{ 
-    if (!is_array($s)) mysql_real_escape_string($s); 
-    function db_conform_array_callback(&$item, $key) { echo $key; $item = db_conform($item); } 
-    array_walk($s, 'db_conform_array_callback'); 
-    return $s; 
-} 
+function escape_sql_array($q) {
+    if(is_array($q))
+        foreach($q as $k => $v)
+            $q[$k] = escape_sql_array($v); //recursive
+    elseif(is_string($q))
+        $q = mysql_real_escape_string($q);
+    return $q;
+}
+
 
 
 function bd_connect(){
