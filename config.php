@@ -37,6 +37,7 @@ class Config {
 		"roiVignettesLocalDir" => "/home/iherbariumtest/htdocs/medias/roi_vignettes/",
 
 		"lastPostRequestFile"  => "/home/iherbariumtest/htdocs/boiteauxlettres/data/lastPost.txt",
+		"lastObservationReceiveResultFile" => "/home/iherbariumtest/htdocs/boiteauxlettres/data/lastObservationReceiveResult.txt",
 
 		// URLs
 		"filesURL"            => "/medias/sources/",
@@ -91,6 +92,7 @@ class Config {
 		"roiVignettesLocalDir" => "/home/ftpiherbarium/htdocs/medias/roi_vignettes/",
 
 		"lastPostRequestFile"  => "/home/ftpiherbarium/htdocs/lastPost.txt",
+		"lastObservationReceiveResultFile" => "/home/ftpiherbarium/htdocs/lastObservationReceiveResult.txt",
 
 		// URLs
 		"filesURL"            => "/medias/sources/",
