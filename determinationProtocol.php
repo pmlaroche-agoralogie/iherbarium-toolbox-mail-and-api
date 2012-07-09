@@ -35,9 +35,11 @@ implements DeterminationProtocolI {
 
     // Stop Conditions
 
-    /*
-    // Stop after at least 4 Answers if the best answer has at least 80% probability,
-    // otherwise stop after 9 answers.
+    
+    // Stop after at least 4 Answers if the best answer has at least 75% probability,
+    // otherwise stop after 9 answers
+    // or the first one is accepted if the user who made it is conencted (the only way to have probability of 1 (>thus > 0.99))
+    //     if a user is not conencted, it is possible if the first three answers are the same
     $questionStopCondition =
       OrStopCondition::make()
       ->setStopConditions(
@@ -46,18 +48,25 @@ implements DeterminationProtocolI {
 				->setStopConditions(
 						    array(
 							  EnoughAnswersStopCondition::make()->setEnoughAnswers(4),
-							  FirstAnswerVeryProbableStopCondition::make()->setAcceptableProbability(0.8)
+							  FirstAnswerVeryProbableStopCondition::make()->setAcceptableProbability(0.75)
 							  )
 						    ),
-				EnoughAnswersStopCondition::make()->setEnoughAnswers(9)
+				EnoughAnswersStopCondition::make()->setEnoughAnswers(9),
+				AndStopCondition::make()
+                                ->setStopConditions(
+                                                    array(
+                                                          EnoughAnswersStopCondition::make()->setEnoughAnswers(1),
+                                                          FirstAnswerVeryProbableStopCondition::make()->setAcceptableProbability(0.99)
+                                                          )
+                                                    )
 				)
 			  );
-    */
+   
     
     // Stop after 1 Answer.
-    $questionStopCondition = 
-      EnoughAnswersStopCondition::make()->setEnoughAnswers(10);
-    
+  /*  $questionStopCondition = 
+      EnoughAnswersStopCondition::make()->setEnoughAnswers(1);
+   */ 
     /*
     // Stop after 12 Answers.
     $comparisonStopCondition =

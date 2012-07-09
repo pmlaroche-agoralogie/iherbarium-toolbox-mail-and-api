@@ -170,6 +170,7 @@ extends TypoherbariumAnswerableTask {
   }
 
   public function createAnswersPattern() {
+    global $connecte;
     $ap = new TypoherbariumROIAnswersPattern();
     
     // Fill the basic fields.
@@ -181,7 +182,6 @@ extends TypoherbariumAnswerableTask {
     // Extract AnswerValues from Answers.
     $unsortedAnswers =
       array_map(function($answer) { return $answer->answerValue; }, $this->answers);
-
     // Count each AnswerValue.
     $answersScore    = array();
     $allAnswersCount = count($unsortedAnswers);
@@ -194,11 +194,17 @@ extends TypoherbariumAnswerableTask {
 		   $answersScore[$answer] = 1;
 	       },
 	       $unsortedAnswers);
-
+    //set $connecte to 1 if an answer (hopefully the only one) is from a connected user
+    $connecte=0;
+    foreach($this->answers as $key => $value)
+	    {
+	    if(is_numeric($value->source))$connecte=1;
+	    }
     // Reformat
     $formattedAnswers =
       array_mapi(
 		 function($answerValue, $answerTimes) use ($allAnswersCount) {
+			global $connecte;
 		   $id = $answerValue;
 		   $askedTimes = $allAnswersCount;
 		   $chosenTimes = $answerTimes;
@@ -208,7 +214,8 @@ extends TypoherbariumAnswerableTask {
 			 "id"     => $answerValue,
 			 "chosen" => $chosenTimes,
 			 "asked"  => $askedTimes,
-			 "pr"     => (($askedTimes > 0) ? ($chosenTimes / $askedTimes) : 0),
+			 // if less than 3 answers and not one is conencted, then the probabilty is lowered by 0.05, so 0.95 is the best 
+			 "pr"     => ((($connecte ==0)&&($askedTimes<3)) ? (($askedTimes > 0) ? ($chosenTimes / $askedTimes) : 0)-0.05 : 1),
 			 "score"  => $chosenTimes - $askedTimes
 			 );
 		 },
