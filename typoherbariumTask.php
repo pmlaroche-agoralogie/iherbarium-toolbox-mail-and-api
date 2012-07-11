@@ -170,7 +170,7 @@ extends TypoherbariumAnswerableTask {
   }
 
   public function createAnswersPattern() {
-    global $connecte;
+
     $ap = new TypoherbariumROIAnswersPattern();
     
     // Fill the basic fields.
@@ -184,22 +184,17 @@ extends TypoherbariumAnswerableTask {
       array_map(function($answer) { return $answer->answerValue; }, $this->answers);
     // Count each AnswerValue.
     $answersScore    = array();
-    $allAnswersCount = count($unsortedAnswers);
-    
-    array_iter(
-	       function($answer) use (&$answersScore) { 
-		 if( isset($answersScore[$answer]) )
-		   $answersScore[$answer] += 1;
-		 else
-		   $answersScore[$answer] = 1;
-	       },
-	       $unsortedAnswers);
-    //set $connecte to 1 if an answer (hopefully the only one) is from a connected user
-    $connecte=0;
+    $allAnswersCount =0;
     foreach($this->answers as $key => $value)
-	    {
-	    if(is_numeric($value->source))$connecte=1;
-	    }
+	{
+	  // give more wieght to known people
+	if(is_numeric($value->source)){$weight=10; } else $weight=1;
+	if( isset($answersScore[$value->answerValue]) )
+                   $answersScore[$value->answerValue] += $weight;
+                 else
+                   $answersScore[$value->answerValue] = $weight;
+	$allAnswersCount += $weight;
+	}
     // Reformat
     $formattedAnswers =
       array_mapi(
@@ -214,8 +209,8 @@ extends TypoherbariumAnswerableTask {
 			 "id"     => $answerValue,
 			 "chosen" => $chosenTimes,
 			 "asked"  => $askedTimes,
-			 // if less than 3 answers and not one is conencted, then the probabilty is lowered by 0.05, so 0.95 is the best 
-			 "pr"     => ((($connecte ==0)&&($askedTimes<3)) ? (($askedTimes > 0) ? ($chosenTimes / $askedTimes) : 0)-0.05 : 1),
+			 // no probability given if only to unknown persons have given answsers
+			 "pr"     => ($askedTimes > 2) ? ($chosenTimes / $askedTimes) : 0 ,
 			 "score"  => $chosenTimes - $askedTimes
 			 );
 		 },
