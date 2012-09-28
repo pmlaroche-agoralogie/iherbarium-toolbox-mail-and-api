@@ -51,6 +51,7 @@ extends ObservationReceiveResult {
   public $error;
 }
 
+file_put_contents(Config::get("lastPostRequestFile")."__", serialize($_POST));
 if ($_POST) {
   
   // Write all the data send by POST in a file (for debugging).
