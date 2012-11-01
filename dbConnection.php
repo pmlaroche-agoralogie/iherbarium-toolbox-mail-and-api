@@ -5,6 +5,8 @@ require_once("myPhpLib.php");
 
 require_once("MDB2.php");
 
+require_once("db.config.php");
+
 interface DBConnectionInterface {
   static public function get($dbId);
 
@@ -24,7 +26,7 @@ class DBConnection {
   // Array's format: DB identifier => DSN
   static private function dsns() {
 
-    $dbConfig = parse_ini_file("db.config.ini");
+    $dbConfig = getDbConfig();
 
     return array(
 	  // Local storage MySQL Database.

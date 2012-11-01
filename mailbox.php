@@ -3,6 +3,8 @@ namespace iHerbarium;
 require_once("myPhpLib.php");
 require_once("mailboxConnection.php");
 
+require_once("mailbox.config.php");
+
 class Mailbox {
 
   public function me() { 
@@ -167,7 +169,7 @@ class MailboxConnectionParameters {
 
   public static function get($mailboxName) {
   
-    $mailboxConfig = parse_ini_file("mailbox.config.ini");
+    $mailboxConfig = getMailboxConfig();
 
     switch($mailboxName) {
 

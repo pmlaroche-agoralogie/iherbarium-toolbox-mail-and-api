@@ -1,0 +1,33 @@
+<?php
+namespace iHerbarium;
+
+// This is the mailbox configuration file.
+// Should be named "mailbox.config.php".
+
+function getMailboxConfig() {
+
+	return array(
+
+	// [org]
+	"PWD_EXPERT_ORG" => "PWD_EXPERT_ORG",
+	"PWD_DEPOT_ORG"  => "PWD_DEPOT_ORG",
+	
+	// [fr]
+	"PWD_EXPERT_FR"  => "PWD_EXPERT_FR",
+	"PWD_DEPOT_FR"   => "PWD_DEPOT_FR",
+	
+	// [es]
+	"PWD_EXPERT_ES"  => "PWD_EXPERT_ES",
+	"PWD_DEPOT_ES"   => "PWD_DEPOT_ES",
+	
+	// [br]
+	"PWD_EXPERT_BR"  => "PWD_EXPERT_BR",
+	"PWD_DEPOT_BR"   => "PWD_DEPOT_BR",
+	
+	// [de]
+	"PWD_EXPERT_DE"  => "PWD_EXPERT_DE",
+	"PWD_DEPOT_DE"   => "PWD_DEPOT_DE"
+	);
+	};
+
+?>

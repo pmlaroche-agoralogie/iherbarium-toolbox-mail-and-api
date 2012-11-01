@@ -1,6 +1,8 @@
 <?php
 namespace iHerbarium;
 
+require_once("db.config.php");
+
 function escape_sql_array($q) {
     if(is_array($q))
         foreach($q as $k => $v)
@@ -14,8 +16,8 @@ function escape_sql_array($q) {
 
 function bd_connect(){
 
-  $dbConfig = parse_ini_file("db.config.ini");
-
+  $dbConfig = getDbConfig();
+  
   //$serveur = mysql_connect("localhost",$dbConfig["USER_TEST"],$dbConfig["PWD_TEST"]); // TEST
   $serveur = mysql_connect("localhost",$dbConfig["USER_PROD"],$dbConfig["PWD_PROD"]); // PRODUCTION
   if (!$serveur)

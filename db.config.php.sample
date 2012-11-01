@@ -1,0 +1,26 @@
+<?php
+namespace iHerbarium;
+
+// This is the database configuration file.
+// Should be named "db.config.php".
+
+function getDbConfig() {
+
+     return array(
+
+     // [production]
+     "USER_PROD"          => "USER_PROD",
+     "PWD_PROD"           => "PWD_PROD",
+     "DATABASE_PROD"      => "DATABASE_PROD",
+
+     //[test]
+     "USER_TEST"          => "USER_TEST",
+     "PWD_TEST"           => "PWD_TEST",
+     "DATABASE_TEST"      => "DATABASE_TEST",
+
+     "DATABASE_LOCAL_DEV" => "DATABASE_LOCAL_DEV",
+     "DATABASE_LOCAL"     => "DATABASE_LOCAL"
+	);
+	};
+
+?>
