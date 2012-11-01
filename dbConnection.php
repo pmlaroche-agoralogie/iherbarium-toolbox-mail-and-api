@@ -22,8 +22,11 @@ class DBConnection {
 
   // DSNs (Data Source Name) for available DB connections.
   // Array's format: DB identifier => DSN
-  static private $dsns =
-    array(
+  static private function dsns() {
+
+    $dbConfig = parse_ini_file("db.config.ini");
+
+    return array(
 	  // Local storage MySQL Database.
 	  /* Tables:
 	   * + User
@@ -36,20 +39,20 @@ class DBConnection {
 	  "LocalStorageDevelopment" =>
 	  array(
 		"phptype"  => "mysql",
-		"username" => "_SHELL_REPLACED_USER_TEST",
-		"password" => "_SHELL_REPLACED_PWD_TEST",
+		"username" => $dbConfig["USER_TEST"],
+		"password" => $dbConfig["PWD_TEST"],
 		"hostspec" => "localhost",
-		"database" => "_SHELL_REPLACED_DATABASE_LOCAL_DEV",
+		"database" => $dbConfig["DATABASE_LOCAL_DEV"],
 		"charset"  => "utf8"
 		),
 
 	  "LocalStorage" =>
 	  array(
 		"phptype"  => "mysql",
-		"username" => "_SHELL_REPLACED_USER_TEST",
-		"password" => "_SHELL_REPLACED_PWD_TEST",
+		"username" => $dbConfig["USER_TEST"],
+		"password" => $dbConfig["PWD_TEST"],
 		"hostspec" => "localhost",
-		"database" => "_SHELL_REPLACED_DATABASE_LOCAL",
+		"database" => $dbConfig["DATABASE_LOCAL"],
 		"charset"  => "utf8"
 		),
 	  
@@ -58,10 +61,10 @@ class DBConnection {
 	  "LocalTypoherbariumProduction" =>
 	  array(
 		"phptype"  => "mysql",
-		"username" => "_SHELL_REPLACED_USER_PROD",
-		"password" => "_SHELL_REPLACED_PWD_PROD",
+		"username" => $dbConfig["USER_PROD"],
+		"password" => $dbConfig["PWD_PROD"],
 		"hostspec" => "localhost",
-		"database" => "_SHELL_REPLACED_DATABASE_PROD"
+		"database" => $dbConfig["DATABASE_PROD"]
 		),
 
 	  // Local development copy of herbarium MySQL Database
@@ -69,10 +72,10 @@ class DBConnection {
 	  "LocalTypoherbariumDevelopment" =>
 	  array(
 		"phptype"  => "mysql",
-		"username" => "_SHELL_REPLACED_USER_TEST",
-		"password" => "_SHELL_REPLACED_PWD_TEST",
+		"username" => $dbConfig["USER_TEST"],
+		"password" => $dbConfig["PWD_TEST"],
 		"hostspec" => "localhost",
-		"database" => "_SHELL_REPLACED_DATABASE_PROD"
+		"database" => $dbConfig["DATABASE_PROD"]
 		),
 
 	  // Local development copy of typoherbarium MySQL Database 
@@ -80,10 +83,10 @@ class DBConnection {
 	  "LocalTypoherbariumBaladeTest" =>
 	  array(
 		"phptype"  => "mysql",
-		"username" => "_SHELL_REPLACED_USER_TEST",
-		"password" => "_SHELL_REPLACED_PWD_TEST",
+		"username" => $dbConfig["USER_TEST"],
+		"password" => $dbConfig["PWD_TEST"],
 		"hostspec" => "localhost",
-		"database" => "_SHELL_REPLACED_DATABASE_LOCAL"
+		"database" => $dbConfig["DATABASE_LOCAL"]
 		),
 
 	  // Remote connection to typoherbarium MySQL Database 
@@ -99,16 +102,21 @@ class DBConnection {
 		)
 
 	  );
+
+  }
   
   // Get DBConnection with given dbId
   static public function get($dbId) {
+
+    $dsns = self::dsns();
+
     // Sanity check.
-    assert( array_key_exists($dbId, self::$dsns) );
+    assert( array_key_exists($dbId, $dsns) );
 
     // Multi singleton implementation.
     if(! isset(self::$dbs[$dbId]) ) {
       // Get the DSN (Data Source Name).
-      $dsn = self::$dsns[$dbId];
+      $dsn = $dsns[$dbId];
       
       // Prepare and initialize a new DBConnection.
       $db = new self();

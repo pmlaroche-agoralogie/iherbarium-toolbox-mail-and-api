@@ -166,6 +166,9 @@ class MailboxConnectionParameters {
   }
 
   public static function get($mailboxName) {
+  
+    $mailboxConfig = parse_ini_file("mailbox.config.ini");
+
     switch($mailboxName) {
 
       /* International : iherbarium.org */
@@ -173,7 +176,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "expert@iherbarium.org";
-      $params->password    = "_SHELL_REPLACED_PWD_EXPERT_ORG";
+      $params->password    = $mailboxConfig["PWD_EXPERT_ORG"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
       
@@ -181,7 +184,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "depot@iherbarium.org";
-      $params->password    = "_SHELL_REPLACED_PWD_DEPOT_ORG";
+      $params->password    = $mailboxConfig["PWD_DEPOT_ORG"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
 
@@ -190,7 +193,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "expert@iherbarium.fr";
-      $params->password    = "_SHELL_REPLACED_PWD_EXPERT_FR";
+      $params->password    = $mailboxConfig["PWD_EXPERT_FR"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
       
@@ -198,7 +201,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "depot@iherbarium.fr";
-      $params->password    = "_SHELL_REPLACED_PWD_DEPOT_FR";
+      $params->password    = $mailboxConfig["PWD_DEPOT_FR"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
       
@@ -207,7 +210,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "expert@iherbarium.es";
-      $params->password    = "_SHELL_REPLACED_PWD_EXPERT_ES";
+      $params->password    = $mailboxConfig["PWD_EXPERT_ES"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
       
@@ -215,7 +218,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "depot@iherbarium.es";
-      $params->password    = "_SHELL_REPLACED_PWD_DEPOT_ES";
+      $params->password    = $mailboxConfig["PWD_DEPOT_ES"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
 
@@ -224,7 +227,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "expert@iherbarium.com.br";
-      $params->password    = "_SHELL_REPLACED_PWD_EXPERT_BR";
+      $params->password    = $mailboxConfig["PWD_EXPERT_BR"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
       
@@ -232,7 +235,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "depot@iherbarium.com.br";
-      $params->password    = "_SHELL_REPLACED_PWD_DEPOT_BR";
+      $params->password    = $mailboxConfig["PWD_DEPOT_BR"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
 
@@ -241,7 +244,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "expert@iherbarium.de";
-      $params->password    = "_SHELL_REPLACED_PWD_EXPERT_DE";
+      $params->password    = $mailboxConfig["PWD_EXPERT_DE"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
       
@@ -249,7 +252,7 @@ class MailboxConnectionParameters {
       $params = new static();
       $params->mailboxName = $mailboxName;
       $params->username    = "depot@iherbarium.de";
-      $params->password    = "_SHELL_REPLACED_PWD_DEPOT_DE";
+      $params->password    = $mailboxConfig["PWD_DEPOT_DE"];
       $params->host        = "pop3.iherbarium.net";
       return $params;
 
