@@ -50,7 +50,8 @@ class DistanceFunctions {
 
     case 'ColorSimpleRGBDistance' : {
 	
-      // The distance function for colors, very simple 3 dimentional manhattan distance.
+      // The distance function for colors, very simple 3 dimentional manhattan distance:
+      // a sum of differences of each of the three color components (R, G and B).
       $distanceFunction =
 	DistanceFunctions::colorSimpleRGBDistance($palette);
 
@@ -59,7 +60,7 @@ class DistanceFunctions {
 
     case 'ColorCompuPhaseRGBDistance' : {
 	
-      /* An advenced distance function for colors, 
+      /* An advanced distance function for colors:
        * distance is defined using a low-cost
        * approximation algorithm from CompuPhase.
        */
@@ -71,7 +72,9 @@ class DistanceFunctions {
  
     case 'DiscreteDistance' : {
 
-      // The simpliest distance function - reversed Kronecker's delta.
+      // The simpliest distance function - reversed Kronecker's delta:
+      // if values are equal, distance is 0;
+      // if values are different, distance is 1.
       $distanceFunction = 
 	DistanceFunctions::discreteDistance();
 
@@ -80,7 +83,7 @@ class DistanceFunctions {
 
     default : {
       
-      // The dstance function was not specified - use the default.
+      // The distance function was not specified - use the default.
       $distanceFunction = 
 	DistanceFunctions::defaultDistance();
 
@@ -102,7 +105,9 @@ class DistanceFunctions {
 
   static public function discreteDistance() {
     
-    // The simpliest distance function - reversed Kronecker's delta.
+    // The simpliest distance function - reversed Kronecker's delta:
+    // if values are equal, distance is 0;
+    // if values are different, distance is 1.
     $distanceFunction =
       function($v1, $v2) {
       return ( (strval($v1) === strval($v2)) ? 0 : 1 );
@@ -145,21 +150,22 @@ class DistanceFunctions {
 
   static public function colorSimpleRGBDistance($palette) {
 
-    // A basic distance function for colors, very simple 3 dimentional manhattan distance.
+    // A basic distance function for colors, very simple 3 dimentional manhattan distance:
+    // a sum of differences of each of the three color components (R, G and B).
     $distanceFunction =
       function($v1, $v2) use ($palette) {
-      $colorKeys = array('R' => 'R', 'G' => 'G', 'B' => 'B');
+      $colorComponents = array('R' => 'R', 'G' => 'G', 'B' => 'B');
       $rgb1 = $palette[$v1];
       $rgb2 = $palette[$v2];
 
-      // Compute colors deltas.
+      // Compute colors deltas (differences) for each color component.
       $deltas =
       array_map(
 		function($colorKey) use ($rgb1, $rgb2) {
 		  // Simple Manhattan distance.
 		  return ( abs( $rgb1[$colorKey] - $rgb2[$colorKey] ) / 255 ); 
 		},
-		$colorKeys);
+		$colorComponents);
 
       $colorsDistance = array_sum($deltas) / 3;
 	  
@@ -179,7 +185,7 @@ class DistanceFunctions {
     $distanceFunction = 
 	  
       function($v1, $v2) use ($palette) {
-      $colorKeys = array('R' => 'R', 'G' => 'G', 'B' => 'B');
+      $colorComponents = array('R' => 'R', 'G' => 'G', 'B' => 'B');
       $rgb1 = $palette[$v1];
       $rgb2 = $palette[$v2];
 	  
@@ -192,7 +198,7 @@ class DistanceFunctions {
 		function($colorKey) use ($rgb1, $rgb2) {
 		  return $rgb1[$colorKey] - $rgb2[$colorKey]; 
 		},
-		$colorKeys);
+		$colorComponents);
 	  
       // Compute total color distance using the CompuPhase formula.
       $distance =

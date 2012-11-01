@@ -10,25 +10,40 @@ abstract class TypoherbariumTask {
   /*
    * Fields description:
    *
-   * Parameters:
+   * Parameters (defining the task):
    *
    * + Category     decides which kind of task is it (answerable / computable)
    *                and therefore who should perform the task (i.e. should it 
    *                be answered by an user or computed by a machine).
    *
-   * + Type         describes exactly what task is it (what should be done).
+   * + Type         describes exactly what task is it (i.e. what should be done).
    *
    * + Context      is the main paramater, it defines the object of
-   *                the task (e.g. a ROI or an Observation).
+   *                the task (e.g. a ROI or an Observation). What is
+   *                it exactly depends on the type of the task.
    *
-   * + Parameters   precise details about how the task should be performed
-   *                (note: context is just a special kind of parameter, it
-   *                was put in a separate field in purpose to make it easier
-   *                to treat in SQL queries).
+   * + Parameters   contains all the precise details about how the task should
+   *                be performed. As with context, what is it exactly depends
+   *                on the type of the task (e.g. for the ROI comparison tasks
+   *                context is a ROI and parameters are a list of ROIs).
+   *                
+   *                (Note: In fact the is no real difference in meaning between
+   *                the context and other "parameter". Normally we would probably 
+   *                have just one field: parameters. But context was added as
+   *                a separate field in order to make it easier to treat in 
+   *                SQL queries. As it is just a single object, it does not need
+   *                to be serialized in any way and fits neatly in a single column,
+   *                which is easily searchable.)
    *
-   * Meta-parameters:
-   * + Priority     is a helper which lets us select most important tasks.
-   * + Protocol     is a useless field...
+   * Meta-parameters (information about how to handle the task):
+   *
+   * + Priority     indicates, how the task is important in order to
+   *                let us select most important tasks.
+   *                Because of my strange idea at the time, the smaller
+   *                the priority, the more important the task.
+   *
+   * + Protocol     is a useless field, should be deleted...
+   *
    */
 
   abstract public function getCategory();

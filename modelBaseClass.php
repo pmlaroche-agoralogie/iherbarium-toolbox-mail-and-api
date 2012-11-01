@@ -7,40 +7,52 @@ require_once("myPhpLib.php");
   The ModelBaseClass is designed to be a base class for all data models.
   
   
-  It uses the PHP dynamic nature to attain two goals:
+  It uses the PHP dynamic nature in order to get rid of some boilerplate
+  code. It does two main things:
   
-  + Introduce universal default getter and setter (accessor and mutator) 
+  + It introduces universal default getter and setter (accessor and mutator) 
   methods for all of class properties without of need to write or generate
-  any boilerplate code.
+  any boilerplate code (normally for every property foo we would have to to
+  write explicitly functions "getFoo()" and "setFoo()").
   
-  + Automatically pass through these getters and setters even when a given
-  property is accessed directly.
+  + It automatically passes through these getters and setters even when a given
+  property is accessed directly. So if in our code we write "X->foo", thanks
+  to this mechanism it will be translated to a "X->getFoo()" method call.
   
   
   Effects on it's subclasses:
 
   + Each subclass public properties are accessed directly (without of 
   passing through getters and setters).
-  [This is not a desired behavior, but we cannot do anything about it.]
-
-  + Each subclass protected properties are always accessed through
-  getters and setters, even if called directly.
+  Note: This is not exactly a desired behavior, but we cannot do anything about it.
   
   + For a class X with a property "abc" the getter method is called "X->getAbc()"
   and the setter is "X->setAbc(newValue)".
+
+  + Each subclass protected properties are always accessed through
+  getters and setters (even if called directly).
 
   + Accessing directly "X->foo" is in fact equal to calling "X->getFoo()"
   (in case of reading the property) or "X->setFoo" (in case of writing
   to the property).
 
+  + Setter methods always return the current object ($this). This way we gain
+  so-called "method chaining": as setFoo() returns the current object, we can
+  create chains of calls like "X->setFoo(1)->setBar(2)". Which is obviously great.
+
   + In order to solve the problematic case of arrays*, an additional method
   has been added "X->addFoo(newValue)" (or "X->addFoo(newValue, index)")
   which adds the "newValue" to property "foos" of X (at given index).
   Of course the property "foos" should be an array.
+  (Note: In order to do it nicely, I've implemented a mechanism I've seen
+  somewhere, which handles in a very simple way the plural names for
+  array properties.)
 
-  TO DO: why is it great, plural names.
+  * Problematic case of arrays: if "foo" is an array, we cannot do "X->getFoo()[index]"
+    and we cannot do "X->getFoo()[index] = value", because PHP does not support
+    array dereferencing (i.e. the "[]") after a function call (i.e. the "foo()").
 
-  * Problematic case of arrays: TO DO
+  TO DO: explain why all that is great.
 
  */
 
@@ -99,11 +111,14 @@ class ModelBaseClass {
     return $this;
   }
 
+  // Array containing exceptions for plural versions of names
+  // (e.g. plural of 'child' is not 'childs' but 'children').
   static protected $pluralizePropertyNameArray =
     array(
 	  'child' => 'children'
 	  );
 
+  // Normally plural version of a name is just the name with a 's' suffix.
   public function pluralizeProperty($property) {
     if(isset(static::$pluralizePropertyNameArray[$property]))
       return static::$pluralizePropertyNameArray[$property];
@@ -111,8 +126,13 @@ class ModelBaseClass {
       return ($property . 's');
   }
 
-  // This functions let us access the protected proprieties as public ones.
-  // Used only for compatibility with old code which doesn't use getters and setters.
+  /* These two functions let us directly access the protected proprieties as public ones.
+     This way the code which does not use getters and setters still works.
+     Moreover, we can have use it even if the property itself does not exist at all, but
+     a getter or a setter exists. For example if our class doesn't have a property
+     "foo" at all, but does have a "getFoo()" method, when we write "X->foo", the
+     "getFoo()" method will be called. */
+
   public function __get($property) {
     $getterMethodName = 'get' . ucfirst($property);
     return $this->$getterMethodName();
@@ -176,6 +196,8 @@ function toArrayTree($sth) {
 }
 
 /*
+
+// TESTS
 
 class ExampleModel
 extends ModelBaseClass {

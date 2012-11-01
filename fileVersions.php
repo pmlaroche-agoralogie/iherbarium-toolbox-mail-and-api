@@ -4,7 +4,7 @@ namespace iHerbarium;
 require_once("myPhpLib.php");
 
 
-/* Description of a file version - where it should be put, it's maximal dimensions etc. */
+/* Description of a file version - where it should be put, its maximal dimensions etc. */
 class TypoherbariumFileVersion {
 
   public $name    = NULL; public function setName($name) { $this->name = $name; return $this; }
