@@ -4,6 +4,7 @@ namespace iHerbarium;
 require_once("myPhpLib.php");
 require_once("modelBaseClass.php");
 
+require_once("exif.php");
 require_once("imageManipulation.php");
 
 class TransferableObservation
@@ -120,76 +121,6 @@ extends ModelBaseClass {
 	    ); 
   }
 
-  private static function parseExifGPSField($exifMeasure, $field) {
-    // Field can be present or not (especially seconds).
-    if(! isset($exifMeasure[$field]) ) {
-      // If the field is not present, it's value is 0.
-      return 0;
-    }
-    else {
-      // If the field is present, it has format "value/divisor" eg. "4255/100".
-      
-      // Extract parts.
-      $valueAndDivisor = explode("/", $exifMeasure[$field]);      
-      $value   = $valueAndDivisor[0];
-      $divisor = $valueAndDivisor[1];
-      
-      // Compute real value.
-      return $value / $divisor;
-    }
-  }
-
-  private static function exifGPSToDegrees($exifMeasure) {
-    $degrees = static::parseExifGPSField($exifMeasure, 0);
-    $minutes = static::parseExifGPSField($exifMeasure, 1);
-    $seconds = static::parseExifGPSField($exifMeasure, 2);
-    return 
-      $degrees + 
-      ($minutes / 60) + 
-      ($seconds / (60 * 60));
-  }
-
-  private static function latitudeFromEXIF($exifLatitude, $exifLatitudeRef) {
-    $degrees = static::exifGPSToDegrees($exifLatitude);
-    switch($exifLatitudeRef) {
-    case 'N': return  $degrees;
-    case 'S': return -$degrees;
-    }
-  }
-
-  private static function longitudeFromEXIF($exifLongitude, $exifLongitudeRef) {
-    $degrees = static::exifGPSToDegrees($exifLongitude);
-    switch($exifLongitudeRef) {
-    case 'E': return  $degrees;
-    case 'W': return -$degrees;
-    }
-  }
-
-  public static function fromExif($exif) {
-    $geoloc = NULL;
-    
-    if(isset($exif['GPSLatitude']) &&
-       isset($exif['GPSLatitudeRef']) &&
-       isset($exif['GPSLongitude']) &&
-       isset($exif['GPSLongitudeRef'])
-       ) {
-      $geoloc = new static();
-      
-      $geoloc
-	->setLatitude (static::latitudeFromExif ($exif['GPSLatitude'],  $exif['GPSLatitudeRef'] ))
-	->setLongitude(static::longitudeFromExif($exif['GPSLongitude'], $exif['GPSLongitudeRef']));
-    }
-    else {
-      $geoloc = new static();
-      
-      $geoloc
-	->setLatitude(0)
-	->setLongitude(0);
-    }
-    
-    return $geoloc;
-  }
-
   // Debug printing
   protected function debugStringsArray() {
     $lines   = array();
@@ -214,6 +145,18 @@ extends ModelBaseClass {
     $geoloc
       ->setLatitude($latitude)
       ->setLongitude($longitude);
+
+    return $geoloc;
+  }
+
+  public static function fromCoordinates($coordinates) {
+    $geoloc = static::unknown();
+    
+    if(array_key_exists("latitude", $coordinates))
+      $geoloc->setLatitude($coordinates["latitude"]);
+
+    if(array_key_exists("longitude", $coordinates))
+      $geoloc->setLongitude($coordinates["longitude"]);
 
     return $geoloc;
   }
@@ -522,12 +465,17 @@ extends ModelBaseClass {
 class Preparator {
 
   protected static function getRoughGeolocation(array $transferablePhotos) {
-    if(isset($transferablePhotos[0])) {
-      $anyPhoto = $transferablePhotos[0];
+    if(count($transferablePhotos) > 0) {
+      $anyPhoto = array_first($transferablePhotos);
       return $anyPhoto->exifGeolocation;
     }
     else {
-      return TransferableGeolocation::fromLatitudeAndLongitude(0, 0);
+      return
+      array(
+        "latitude"  => 0,
+        "longitude" => 0
+        );
+
     }
   }
 
@@ -564,9 +512,16 @@ class Preparator {
       file_put_contents($saveToPath, $protocolPhoto->image);
 
       // Geoloc
+      $geoloc = 
+      array(
+        "latitude"  => 0,
+        "longitude" => 0
+        );
+
       $exif = exif_read_data($saveToPath);
-      $geoloc = TransferableGeolocation::fromExif($exif);
       
+      if($exif != False)
+        $geoloc = Exif::coordinatesFromExif($exif);
 
       // Photo
       //$photo = new TransferablePhoto();
@@ -578,8 +533,8 @@ class Preparator {
       $photo->localFilename    = NULL;
       $photo->depositTimestamp = $protocolPhoto->timestamp;
       $photo->userTimestamp    = NULL;
-      $photo->exifTimestamp    = strtotime($exif['DateTimeOriginal']);
-      $photo->exifOrientation  = (isset($exif['Orientation']) ? $exif['Orientation'] : NULL);
+      $photo->exifTimestamp    = (array_key_exists('DateTimeOriginal', $exif) ? strtotime($exif['DateTimeOriginal']) : NULL);
+      $photo->exifOrientation  = (array_key_exists('Orientation',      $exif) ? $exif['Orientation']                 : NULL);
       $photo->exifGeolocation  = $geoloc;
       $photo->rois             = array();
       
