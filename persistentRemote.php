@@ -53,14 +53,14 @@ implements RemoteStorage {
     return $userInfo;
   }
 
-  public function saveObservation(Observation $obs) {
+  public function saveObservation(Observation $obs, $url = "") {
     /* with photos! */
-    
+
     $this->debug("Begin", "Save Observation", $obs);
 
     // Prepare Observation.
     $transferableObs = Preparator::prepareForTransfer($obs);
-    $this->debug("Debug", "Observation prepared for transfer", $transferableObs);
+    $this->debug("Debug", "Observation prepared for transfer", var_export($transferableObs, True) );
 
     // Convert it o a JSON in two phases:
     // (if we do it directly, the protected proprieties of
@@ -68,14 +68,14 @@ implements RemoteStorage {
 
     // 1. Convert it to a tree of assiociative arrays.
     $tree = toArrayTree($transferableObs);
-    $this->debug("Debug", "Observation as a tree", var_export($tree, true));
+    $this->debug("Debug", "Observation as a tree", "<pre>" . var_export($tree, true) . "</pre>");
 
     // 2. Encode it as JSON.
     $jsonObs = json_encode($tree);
     $this->debug("Debug", "Observation JSON", $jsonObs);
     
     // HTTP Post request.
-    $url = Config::get("observationReceiverURL");
+    if($url == "") $url = Config::get("observationReceiverURL");
     $fields = array('observation' => $jsonObs);
     $response = http_post_fields($url, $fields);
 

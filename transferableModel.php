@@ -532,19 +532,22 @@ class Preparator {
   }
 
   public static function prepareForTransfer($protocolObs) {
-    $obs = new TransferableObservation();
-    
+
     // Observation
-    $obs
-      ->setId          ($protocolObs->id)
-      ->setUser        ($protocolObs->user->eMail)
-      ->setUid         (NULL)
-      ->setTimestamp   (NULL)
-      ->setGeolocation (NULL)
-      ->setPrivacy     ("public")
-      ->setKind        (1)
-      ->setPlantSize   ("")
-      ->setCommentary  ("");
+    //$obs = new TransferableObservation();
+    $obs = new \stdClass();
+    $obs->id          = $protocolObs->id;
+    $obs->user        = $protocolObs->user->eMail;
+    $obs->uid         = NULL;
+    $obs->timestamp   = NULL;
+    $obs->geolocation = NULL;
+    $obs->privacy     = "public";
+    $obs->kind        = 1;
+    $obs->plantSize   = "";
+    $obs->commentary  = "";
+    $obs->photos      = array();
+
+    //echo("<pre>" . var_export($obs, True)   . "</pre>");
     
     // Photos
     foreach($protocolObs->photos as $protocolPhoto) {
@@ -552,7 +555,7 @@ class Preparator {
       
       // Prepare local name.
       $localFilename = "photo_" . time() . "_" . rand() . ".jpg";
-            
+
       // Prepare local path.
       $saveToPath = $localDir . $localFilename;
 
@@ -566,8 +569,9 @@ class Preparator {
       
 
       // Photo
-      $photo = new TransferablePhoto();
-      $photo->obsId            = $obs->id;
+      //$photo = new TransferablePhoto();
+      $photo = new \stdClass();
+      $photo->obsId            = $protocolObs->id;
       $photo->remoteDir        = Config::get("transferablePhotoRemoteDir");
       $photo->remoteFilename   = $localFilename;
       $photo->localDir         = NULL;
@@ -579,26 +583,37 @@ class Preparator {
       $photo->exifGeolocation  = $geoloc;
       $photo->rois             = array();
       
+      //echo("<pre>" . var_export($photo, True) . "</pre>");
+
       // ROI
       if($protocolPhoto->tag) {
-	$roi = new TransferableROI();
-	$rect = new ROIRectangle();
-	$rect->setRectangle(0.02, 0.02, 0.98, 0.98);
-	$roi->rectangle = $rect;
-	$roi->tag = $protocolPhoto->tag;
+        //$roi = new TransferableROI();
+        $roi = new \stdClass();
+        //$rect = new ROIRectangle();
+        $rect = new \stdClass();
+        $rect->left    = 0.02;
+        $rect->top     = 0.02;
+        $rect->right   = 0.98;
+        $rect->bottom  = 0.98;
+        $roi->rectangle = $rect;
+        $roi->tag = $protocolPhoto->tag;
 
-	$photo->addRoi($roi);
+        //echo("<pre>" . var_export($roi, True) . "</pre>");
+
+        //$photo->addRoi($roi);
+        array_push($photo->rois, $roi);
       }
       
       // Photo ready
-      $obs->addPhoto($photo);
+      //$obs->addPhoto($photo);
+      array_push($obs->photos, $photo);
 
 
       // Comments - add the Protocol Photo comments to Observation's comments.
       /*
       if($protocolPhoto->comments) {
-	if($obs->commentary) $obs->commentary .= " ";
-	$obs->commentary .= $protocolPhoto->comments;
+        if($obs->commentary) $obs->commentary .= " ";
+        $obs->commentary .= $protocolPhoto->comments;
       }
       */
     }
@@ -606,7 +621,7 @@ class Preparator {
     // Get rough geolocation.
     $obs->geolocation = static::getRoughGeolocation($obs->photos);
 
-    debug("Ok", "PrepareForTransfer()", "Prepared.", $obs);
+    debug("Ok", "PrepareForTransfer()", "Prepared.", var_export($obs, True) );
     return $obs;
   }
 }
