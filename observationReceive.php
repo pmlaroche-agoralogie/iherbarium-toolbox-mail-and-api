@@ -121,6 +121,45 @@ if ($_POST) {
     $localTypoherbarium->addPhotoToObservation($photo, $obs->id, $uid);
   }
 
+  // 4. Save Medias.
+  if(isset($obsObj->medias))
+  foreach($obsObj->medias as $mediaObj) {
+
+    /*
+    media:
+    
+      required fields:
+      + remoteDir
+      + remoteFilename
+
+      optional fields:
+      + depositTimestamp
+
+    */
+
+    // Check requirements.
+    if( !isset($mediaObj->remoteDir ) ||
+        !isset($mediaObj->remoteFilename ) ) 
+      continue;
+
+    // Create a corresponding TypoherbariumMedia object.
+    $media = new TypoherbariumMedia();
+    $media
+      ->setDepositTimestamp(isset($mediaObj->depositTimestamp) ? $mediaObj->depositTimestamp : NULL)
+      ->setInitialFilename($mediaObj->remoteFilename);    
+
+    // Link the Media with the Observation.
+    $media->obsId = $obs->id;
+
+    // Copy the Media source file from remote address to local hard drive.
+    $remotePath = $mediaObj->$remoteDir . $mediaObj->$remoteFilename;
+    $media = $localTypoherbarium->copyMediaSourceFromRemotePath($media, $remotePath);
+
+    // Finally: insert the Media into the database.
+    $media = $localTypoherbarium->createMedia($media);
+
+  }
+
   // Success!
   observationReceiveResult::success($obs->id);
 } 

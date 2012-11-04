@@ -33,6 +33,7 @@ extends TransferableObservation {
   protected $plantSize   = NULL;
   protected $commentary  = NULL;
   protected $photos      = array();
+  protected $medias      = array();
 
   // Observation settings
   protected $privacy = NULL;
@@ -49,10 +50,17 @@ extends TransferableObservation {
     $lines[] = "kind: "        . $this->kind;
     $lines[] = "plantSize: "   . $this->plantSize;
     $lines[] = "commentary: "  . $this->commentary;
+
     $lines[] = "photos: " . 
     mkString(
      array_map(function($photo) { return $photo; }, $this->photos),
      "<p>Photos:<ul><li>", "</li><li>", "</li></ul></p>"
+     );
+
+    $lines[] = "media: " . 
+    mkString(
+     array_map(function($media) { return $media; }, $this->medias),
+     "<p>Media:<ul><li>", "</li><li>", "</li></ul></p>"
      );
 
     return $lines;
@@ -113,6 +121,17 @@ extends TransferableObservation {
       $obj->photos
       )
     );
+
+    /*
+    $obs->setMedias(
+      array_map(
+       function($objMedia) { 
+        return TypoherbariumMedia::fromStdObj($objMedia); 
+      },
+      $obj->medias
+      )
+    );
+    */
 
     return $obs;
   }
@@ -874,6 +893,71 @@ extends ModelBaseClass {
 
   function __toString() { return $this->debugString(); }
   
+}
+
+
+
+
+class TypoherbariumMedia
+extends ModelBaseClass {
+
+  protected $id    = NULL;
+  protected $obsId = NULL;
+
+  // Timestamp
+  protected $depositTimestamp = NULL;
+
+  // File paths
+  protected $localDir        = NULL;
+  protected $localFilename   = NULL;
+  
+  protected $initialFilename = NULL;
+
+  protected $sourceFile      = NULL;
+
+
+  // Debug printing
+  protected function debugStringsArray() {
+    $lines   = array();
+
+    $lines[] = "id: "    . $this->id;
+    $lines[] = "obsId: " . $this->obsId;
+
+    $lines[] = "depositTimestamp: " . $this->depositTimestamp;    
+
+    $lines[] = "localPath: "       . $this->localPath();
+    $lines[] = "initialFilename: " . $this->initialFilename();
+
+    return $lines;
+  }
+
+  final protected function debugString() {
+    return 
+    mkString(
+     $this->debugStringsArray(),
+     "<p>TypoherbariumMedia:<ul><li>", "</li><li>", "</li></ul></p>"
+     );
+  }
+
+  function __toString() { return $this->debugString(); }
+
+
+  static public function fromStdObj($obj) {
+    $media = new static;
+    $media->id               = (isset($obj->id              ) ? $obj->id               : NULL);
+    $media->obsId            = (isset($obj->obsId           ) ? $obj->obsId            : NULL);
+    $media->depositTimestamp = (isset($obj->depositTimestamp) ? $obj->depositTimestamp : NULL);
+    $media->initialFilename  = (isset($obj->initialFilename ) ? $obj->initialFilename  : NULL);
+    $media->localDir         = (isset($obj->localDir        ) ? $obj->localDir         : NULL);
+    $media->localFilename    = (isset($obj->localFilename   ) ? $obj->localFilename    : NULL);
+
+    return $media;
+  }
+
+  public function localPath() {
+    return $this->localDir . $this->localFilename;
+  }
+
 }
 
 ?>

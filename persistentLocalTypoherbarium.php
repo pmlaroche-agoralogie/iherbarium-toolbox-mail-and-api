@@ -27,6 +27,7 @@ implements PersistentUserI,
   }
 
   // Photo and ROI file settings.
+  public $mediaSource       = NULL;
   public $photoSource       = NULL;
   public $photoFileVersions = NULL;
   public $roiFileVersions   = NULL;
@@ -34,6 +35,13 @@ implements PersistentUserI,
   function __construct() {
     parent::__construct();
     
+    // Config - Media source.
+    $this->mediaSource = 
+      TypoherbariumFileVersion::make()
+      ->setName("source")
+      ->setDir(Config::get("filesLocalDir"))
+      ->setUrl(Config::get("filesURL"));
+
     // Config - Photo source.
     $this->photoSource = 
       TypoherbariumFileVersion::make()
@@ -304,7 +312,25 @@ implements PersistentUserI,
 						       $obs->addPhoto($photo, $photoId);
 						     });
 
-			       
+            // Link Medias.
+
+            // Fetch id's of Medias which belong to this Observation.
+            $mediasQuery = 
+            "SELECT idmedia" .
+            " FROM iherba_medias " .
+            " WHERE id_observation = " . $context->quote($obsId);
+             
+            $context->iterResults(// Medias query.
+              $mediasQuery,
+              
+              // For each Media...
+              function($mediaRow) use ($context, &$obs) {
+                $mediaId = $mediaRow->idmedias;
+                $media = $context->loadMedia($mediaId);
+                
+                $obs->addMedia($media, $mediaId);
+              });
+
 
 			       $context->debug("Ok", "Loaded Observation $obsId.", $obs);
 			       return $obs;
@@ -327,7 +353,7 @@ implements PersistentUserI,
 
     if($uid)
       $obsQuery .=
-	" WHERE id_user = " . $context->quote($uid);
+	    " WHERE id_user = " . $context->quote($uid);
 
     $obsIds =
       $context->mapResults(// Query
@@ -359,6 +385,9 @@ implements PersistentUserI,
     // Delete Photos of the Observation.
     array_iter(array($context, "deletePhoto"), $obs->photos);
     
+    // Delete Medias of the Observation.
+    array_iter(array($context, "deleteMedia"), $obs->medias);
+
     // Delete Observarion from all Groups.
     $deleteObsFromAllGroupsQuery =
       "DELETE FROM iherba_group_observations" .
@@ -704,6 +733,182 @@ implements PersistentUserI,
     array_iter(array($context, "deleteFile"), $photoVersionsPaths);
     
     $context->debug("Ok", "Deleted all files with versions of Photo $photoId!");
+
+  }
+
+
+  // MEDIA
+
+  public function createMedia(TypoherbariumMedia $media) {
+
+    // Workaround...
+    $context = $this;
+    
+    // Initial insert to get Media's id.
+    $insertMediaQuery = "INSERT INTO iherba_medias VALUES()";
+    $affectedMedia = $context->exec($insertMediaQuery);
+    $mediaId = $context->lastInsertID("iherba_medias", "idmedia");
+    $media->id = $mediaId;
+
+    // Date format helper.
+    $formatDate = function($date) {
+      return ($date ? date("Y-m-d", $date) : NULL); 
+    };
+
+    // Real Media insert.
+    $mediaQuery = 
+    "UPDATE iherba_medias " .
+    " SET" .
+    "   id_obs = "            . $context->quote($obsId) .
+    " , date_depot = "        . $context->quote($formatDate($media->depositTimestamp)) .
+    " , nom_media_initial = " . $context->quote($media->initialFilename) .
+    " , nom_media_final = "   . $context->quote($media->localFilename) .
+    " WHERE idmedia = "       . $context->quote($mediaId);
+    
+    $affectedMedia = $context->exec($mediaQuery);
+    
+    return $media;
+  }
+
+  private function buildMediaFilename(TypoherbariumMedia $media) {
+
+    // Workaround...
+    $context = $this;
+    
+    // Build the filename.
+    $baseFilename = 
+    "media_" . $media->id . 
+    "_" . 
+    "observation_" . $media->obsId;
+
+    return $baseFilename;
+  }
+
+  public function copyMediaSourceFromRemotePath(TypoherbariumMedia $media, $remotePath) {
+
+    // Workaround...
+    $context = $this;
+    
+    // Prepare the local path.
+    $media
+      ->setLocalDir      ($context->mediaSource->dir)
+      ->setLocalFilename ($context->buildMediaFilename($media))
+      ->setSourceFile    ($context->mediaSource->instantiate($baseFilename));
+
+    // Copy from "remote" source to local hard disk.
+    $context->debug("Debug", "Copying media from ". $remotePath ." to ". $media->localPath() );
+    copy($remotePath, $media->localPath());
+
+    return $media;
+
+  }
+
+  public function loadMedia($mediaId) {
+
+    // Workaround...
+    $context = $this;
+
+    // If we are already given the Media object.
+    if($mediaId instanceof TypoherbariumMedia)
+      return $mediaId;
+    
+    // Fetch the Media.
+    $mediaQuery = 
+    "SELECT id_observation, date_depot, nom_media_initial, nom_media_final " .
+    " FROM iherba_medias " .
+    " WHERE idmedia = " . $context->quote($mediaId);
+    
+    return
+      $context->singleResult(// Media's query.
+        $mediaQuery,
+
+        // If the Media exists...
+        function($row) use ($context, $mediaId) {
+
+          // Prepare the Media.
+          $media = new TypoherbariumMedia();
+
+          // Media's Id
+          $media->id = $mediaId;
+
+          // Observation's Id
+          $media->obsId = $row->id_observation;
+
+          // Timestamps
+          $media->depositTimestamp = $row->date_depot;
+
+          // Initial Filename
+          $media->initialFilename = $row->nom_media_initial;
+
+          // Local Path (to the source)
+          $media->localDir       = $context->mediaSource->dir;
+          $media->localFilename  = $row->nom_media_final;
+
+          // Source File
+          $baseFilename          = $media->localFilename;
+          $media->sourceFile     = $context->mediaSource->instantiate($baseFilename);
+
+
+          $context->debug("Ok", "Loaded media $mediaId.", $media);
+          return $media;
+        },
+
+        // If the Media doesn't exist...
+        function() use ($context, $mediaId) {
+          $context->debug("Error", "Media with id = '$mediaId' doesn't exist!");
+          return NULL;
+        }
+      );
+  }
+
+  public function deleteMedia($mediaId) {
+
+    // Workaround...
+    $context = $this;
+    
+    // Emulating function overloading: 
+    // If we are already given the TypoherbariumMedia object.
+    if($mediaId instanceof TypoherbariumMedia) {
+      $media = $mediaId;
+      $mediaId = $media->id;
+    } else {
+      $media = $context->loadMedia($mediaId);
+    }
+    
+    $context->debug("Begin", "Deleting Media $mediaId...");
+    
+    // Delete Media's source file on disk.
+    $context->deleteMediaSourceFile($media);
+
+    // Delete the Media in the database.
+    $deleteMediaQuery =
+    "DELETE FROM iherba_medias" . 
+    " WHERE idmedia = " . $context->quote($mediaId);
+    
+    $mediaAffected =& $context->exec($deleteMediaQuery);
+
+    // Check if deleted successfully.
+    if($mediaAffected > 0) {
+      $context->debug("Ok", "Deleted Media $mediaId!");
+    } else {
+      $context->debug("Error", "Deleting Media $mediaId failed!");
+    }
+
+  }
+
+  private function deleteMediaSourceFile(TypoherbariumMedia $media) {
+
+    // Workaround...
+    $context = $this;
+
+    $mediaId = $media->id;
+
+    $context->debug("Begin", "Deleting source file of Media $mediaId...");
+
+    // Delete Media's source file.
+    $context->deleteFile($media->sourceFile->path());
+    
+    $context->debug("Ok", "Deleted source file of Media $mediaId!");
 
   }
 
@@ -2512,6 +2717,7 @@ implements PersistentUserI,
     $affectedQuestionsFinished = $context->exec($insertQuestionsFinishedQuery);
     
   }
+
 
 }
 
