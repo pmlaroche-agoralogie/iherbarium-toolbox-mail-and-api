@@ -6,6 +6,7 @@ require_once("debug.php");
 require_once("config.php");
 
 class UserInfoRequest {
+
   public $eMail;
   public $lang;
 
@@ -13,7 +14,7 @@ class UserInfoRequest {
   protected function debugStringsArray() {
     $lines   = array();
     $lines[] = "eMail: " . $this->eMail;
-    $lines[] = "lang: " . $this->lang;
+    $lines[] = "lang: "  . $this->lang;
     return $lines;
   }
 
@@ -27,6 +28,8 @@ class UserInfoRequest {
 
   function __toString() { return $this->debugString(); }
 
+
+  // Instantiate from any object.
   static public function fromStdObj($obj) {
     $request = new self();
     $request->eMail = $obj->eMail;
@@ -37,6 +40,7 @@ class UserInfoRequest {
 }
 
 abstract class UserInfoAnswer {
+
   public $status;
 
   abstract protected function type();  
@@ -60,6 +64,7 @@ abstract class UserInfoAnswer {
   function __toString() { return $this->debugString(); }
   
 
+  // Instantiate from any object.
   static public function fromStdObj($obj) {
     assert(isset($obj->status));
     assert($obj->status == "UserExists" || 
@@ -82,6 +87,7 @@ abstract class UserInfoAnswer {
 
 class UserExists
 extends UserInfoAnswer {
+
   public $username;
   public $uid;
 
@@ -95,6 +101,7 @@ extends UserInfoAnswer {
     return $lines;
   }
 
+  // Instantiate from any object.
   static public function fromStdObj($obj) {
     assert(isset($obj->status));
     assert($obj->status == "UserExists" || $obj->status == "UserJustCreated");
@@ -115,6 +122,7 @@ extends UserInfoAnswer {
 
 class UserJustCreated
 extends UserExists {
+
   public $password;
 
   protected function type() { return __CLASS__; }
@@ -126,6 +134,8 @@ extends UserExists {
     return $lines;
   }
 
+
+  // Instantiate from any object.
   static public function fromStdObj($obj) {
     assert(isset($obj->status));
     assert($obj->status == "UserJustCreated");
@@ -142,6 +152,8 @@ extends UserInfoAnswer {
 
   protected function type() { return __CLASS__; }
 
+  
+  // Instantiate from any object.
   static public function fromStdObj($obj) {
     assert(isset($obj->status));
     assert($obj->status == "UserDoesntExist");

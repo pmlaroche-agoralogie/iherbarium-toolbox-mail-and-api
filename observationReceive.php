@@ -11,10 +11,14 @@ require_once("dbConnection.php");
 
 require_once("persistentObject.php");
 
+
+// Setting up the Debug and Logger modules.
+// (It's always necessary for scripts which are
+// launched directly as the "main" PHP file.)
 Logger::$logDirSetting = "logDirObservationReceiver";
 Debug::init("observationReceive", false);
-
 function me() { return "observationReceive"; };
+
 
 abstract class ObservationReceiveResult {
   public $result;
@@ -49,6 +53,11 @@ class ObservationReceiveError
 extends ObservationReceiveResult {
   public $error;
 }
+
+
+
+
+// Script
 
 file_put_contents(Config::get("lastPostRequestFile")."__", serialize($_POST));
 if ($_POST) {
