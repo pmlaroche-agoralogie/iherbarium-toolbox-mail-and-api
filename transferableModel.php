@@ -13,16 +13,4 @@ require_once("typoherbariumModel.php");
   blowing everything up or loosing unsaved changes.)
 */
 
-class TransferableObservation
-extends TypoherbariumObservation { }
-
-class TransferableGeolocation
-extends TypoherbariumGeolocation { }
-
-class TransferablePhoto
-extends TypoherbariumPhoto { }
-
-class TransferableROI
-extends TypoherbariumROI { }
-
 ?>
