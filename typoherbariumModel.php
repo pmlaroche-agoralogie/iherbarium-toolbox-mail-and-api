@@ -180,6 +180,10 @@ extends TransferableGeolocation {
     return $geoloc;
   }
 
+  public static function fromExif($exif) {
+    return static::fromCoordinates( Exif::coordinatesFromExif($exif) );
+  }
+
   public static function unknown() {
     return static::fromLatitudeAndLongitude(0, 0);
   }
