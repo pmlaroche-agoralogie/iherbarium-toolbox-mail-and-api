@@ -16,21 +16,6 @@ require_once("exif.php");
 //
 class Preparator {
 
-  protected static function getRoughGeolocation(array $photos) {
-    if(count($photos) > 0) {
-      $anyPhoto = array_first($photos);
-      return $anyPhoto->exifGeolocation;
-    }
-    else {
-      return
-      array(
-        "latitude"  => 0,
-        "longitude" => 0
-        );
-
-    }
-  }
-
   public static function prepareForTransfer($protocolObs) {
 
     // Observation
@@ -129,6 +114,22 @@ class Preparator {
     debug("Ok", "PrepareForTransfer()", "Prepared.", var_export($obs, True) );
     return $obs;
   }
+  
+  protected static function getRoughGeolocation(array $photos) {
+    if(count($photos) > 0) {
+      $anyPhoto = array_first($photos);
+      return $anyPhoto->exifGeolocation;
+    }
+    else {
+      return
+      array(
+        "latitude"  => 0,
+        "longitude" => 0
+        );
+
+    }
+  }
+
 }
 
 

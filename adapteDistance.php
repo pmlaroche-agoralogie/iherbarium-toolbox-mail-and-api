@@ -1,4 +1,4 @@
-<?php
+<?php // by Dany
 namespace iHerbarium;
 
 function adaptDistance($Lat1,$Long1,$Lat2,$Long2){

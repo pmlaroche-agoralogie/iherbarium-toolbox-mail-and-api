@@ -1,4 +1,4 @@
-<?php
+<?php // by Dany (with help of Kuba)
 namespace iHerbarium;
 
 require_once("adapteHeures.php");

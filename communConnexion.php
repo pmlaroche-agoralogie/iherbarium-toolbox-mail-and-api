@@ -1,4 +1,4 @@
-<?php
+<?php // by Dany
 namespace iHerbarium;
 
 require_once("db.config.php");

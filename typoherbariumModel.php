@@ -15,7 +15,7 @@ require_once("determinationProtocol.php");
 require_once("typoherbariumTask.php");
 
 class TransferableObservation
-extends ModelBaseClass { }
+extends ModelBaseClass { /* Included only for backward compatibility reasons. */ }
 
 class TypoherbariumObservation
 extends TransferableObservation {
@@ -122,7 +122,7 @@ extends TransferableObservation {
 
 
 class TransferableGeolocation
-extends ModelBaseClass { }
+extends ModelBaseClass { /* Included only for backward compatibility reasons. */ }
 
 class TypoherbariumGeolocation 
 extends TransferableGeolocation {
@@ -203,7 +203,7 @@ extends TransferableGeolocation {
 
 
 class TransferablePhoto
-extends ModelBaseClass { }
+extends ModelBaseClass { /* Included only for backward compatibility reasons. */ }
 
 class TypoherbariumPhoto
 extends TransferablePhoto {
@@ -474,7 +474,7 @@ extends ModelBaseClass {
 
 
 class TransferableROI
-extends ModelBaseClass { }
+extends ModelBaseClass { /* Included only for backward compatibility reasons. */ }
 
 class TypoherbariumROI
 extends TransferableROI {

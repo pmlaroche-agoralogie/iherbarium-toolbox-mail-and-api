@@ -1,4 +1,4 @@
-<?php
+<?php // by Dany
 namespace iHerbarium;
 
 function adaptHeures($param){

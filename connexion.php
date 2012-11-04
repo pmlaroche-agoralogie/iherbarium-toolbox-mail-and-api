@@ -1,4 +1,4 @@
-<?php
+<?php // by Dany
 namespace iHerbarium; 
 $debug_level=0;
 include("communConnexion.php");
