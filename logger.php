@@ -44,8 +44,8 @@ class Logger {
     self::log("ProtocolEventConsumer.html", "$what");
   }
 
-  static public function logObservationReceiverReceived(TransferableObservation $obs) {
-    $what = "observationReceiver.php received a TransferableObservation. " . $obs->__toString();
+  static public function logObservationReceiverReceived(TypoherbariumObservation $obs) {
+    $what = "observationReceiver.php received a TypoherbariumObservation. " . $obs->__toString();
     self::log("ObservationReceiver.html", "$what");
   }
 

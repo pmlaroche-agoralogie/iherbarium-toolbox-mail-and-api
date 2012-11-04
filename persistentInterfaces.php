@@ -8,7 +8,7 @@ interface PersistentUserI {
 
 interface PersistentObservationI {
   
-  public function saveObservation(TransferableObservation $obs, $uid); // = INSERT or UPDATE
+  public function saveObservation(TypoherbariumObservation $obs, $uid); // = INSERT or UPDATE
   public function loadObservation($obsId);
   public function deleteObservation($obsId);
   
@@ -18,14 +18,14 @@ interface PersistentObservationI {
 
 interface PersistentPhotoI {
   
-  public function addPhotoToObservation(TransferablePhoto $photo, $obsId, $uid);
-  //  private function buildPhotoFilename(TransferablePhoto $photo);
-  //  private function createPhotoFiles(TransferablePhoto $photo);
+  public function addPhotoToObservation(TypoherbariumPhoto $photo, $obsId, $uid);
+  //  private function buildPhotoFilename(TypoherbariumPhoto $photo);
+  //  private function createPhotoFiles(TypoherbariumPhoto $photo);
   public function loadPhoto($photoId);
   public function deletePhoto($photoId);
-  //  private function deletePhotoFiles(TransferablePhoto $photo);
-  //  private function deletePhotoSourceFile(TransferablePhoto $photo);
-  //  private function deletePhotoVersionsFiles(TransferablePhoto $photo);
+  //  private function deletePhotoFiles(TypoherbariumPhoto $photo);
+  //  private function deletePhotoSourceFile(TypoherbariumPhoto $photo);
+  //  private function deletePhotoVersionsFiles(TypoherbariumPhoto $photo);
   
 }
 

@@ -3,7 +3,7 @@ namespace iHerbarium;
 
 require_once("myPhpLib.php");
 require_once("dbConnection.php");
-require_once("transferableModel.php");
+require_once("typoherbariumModel.php");
 
 // Local Storage
 require_once("persistentLocalStorage.php");

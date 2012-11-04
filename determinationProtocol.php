@@ -13,8 +13,8 @@ interface DeterminationProtocolI {
   public function addedROI(TypoherbariumROI $roi);
   public function modifiedROI(TypoherbariumROI $roi);
 
-  public function addedObservation(TransferableObservation $obs);
-  public function modifiedObservation(TransferableObservation $obs);
+  public function addedObservation(TypoherbariumObservation $obs);
+  public function modifiedObservation(TypoherbariumObservation $obs);
 
   public function answerReceived(TypoherbariumROIAnswer $answer);
 }
@@ -183,14 +183,14 @@ implements DeterminationProtocolI {
   }
 
 
-  public function addedObservation(TransferableObservation $obs) {
+  public function addedObservation(TypoherbariumObservation $obs) {
 
     // If added an Observation then added all it's ROIs.
     array_iter( array($this, "addedROI"), $obs->getROIs() );
 
   }
 
-  public function modifiedObservation(TransferableObservation $obs) {
+  public function modifiedObservation(TypoherbariumObservation $obs) {
     return $this->addedObservation($obs);
   }
 

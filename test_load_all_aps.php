@@ -9,7 +9,6 @@ require_once("logger.php");
 
 Debug::init("iHerbariumAddObservationPlugin", False);
 
-require_once("transferableModel.php");
 require_once("typoherbariumModel.php");
 require_once("dbConnection.php");
 

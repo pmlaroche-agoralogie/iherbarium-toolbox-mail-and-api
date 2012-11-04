@@ -3,7 +3,6 @@ namespace iHerbarium;
 
 require_once("myPhpLib.php");
 require_once("dbConnection.php");
-require_once("transferableModel.php");
 require_once("typoherbariumModel.php");
 
 require_once("apModel.php");
@@ -147,7 +146,7 @@ implements PersistentUserI,
 
   // OBSERVATION
 
-  public function saveObservation(TransferableObservation $obs, $uid) {
+  public function saveObservation(TypoherbariumObservation $obs, $uid) {
     
     // Workaround...
     $context = $this;
@@ -169,7 +168,7 @@ implements PersistentUserI,
 
   }
 
-  private function insertObservation(TransferableObservation $obs, $uid) {
+  private function insertObservation(TypoherbariumObservation $obs, $uid) {
     
     // Workaround...
     $context = $this;
@@ -202,7 +201,7 @@ implements PersistentUserI,
 
   }
   
-  private function updateObservation(TransferableObservation $obs, $uid) {
+  private function updateObservation(TypoherbariumObservation $obs, $uid) {
 
     // Workaround...
     $context = $this;
@@ -256,7 +255,7 @@ implements PersistentUserI,
     $context = $this;
 
     // If we are already given the Observation object.
-    if($obsId instanceof TransferableObservation)
+    if($obsId instanceof TypoherbariumObservation)
       return $obsId;
 
     // Fetch the Observation.
@@ -280,7 +279,7 @@ implements PersistentUserI,
 				 ->setUser        (NULL) // TODO
 				 ->setUid         ($row->id_user)
 				 ->setTimestamp   ($row->date_depot)
-				 ->setGeolocation (TransferableGeolocation::fromLatitudeAndLongitude($row->latitude, $row->longitude))
+				 ->setGeolocation (TypoherbariumGeolocation::fromLatitudeAndLongitude($row->latitude, $row->longitude))
 				 ->setPrivacy     ($row->public === "oui" ? "public" : "private")
 				 ->setKind        ($row->genre_obs)
 				 ->setPlantSize   ($row->taille_plante)
@@ -347,8 +346,8 @@ implements PersistentUserI,
     $context = $this;
 
     // Emulating function overloading: 
-    // If we are already given the TransferableObservation object.
-    if($obsId instanceof TransferableObservation) {
+    // If we are already given the TypoherbariumObservation object.
+    if($obsId instanceof TypoherbariumObservation) {
       $obs = $obsId;
       $obsId = $obs->id;
     } else {
@@ -387,7 +386,7 @@ implements PersistentUserI,
   
   // PHOTO
 
-  public function addPhotoToObservation(TransferablePhoto $photo, $obsId, $uid) {
+  public function addPhotoToObservation(TypoherbariumPhoto $photo, $obsId, $uid) {
     
     // Workaround...
     $context = $this;
@@ -456,7 +455,7 @@ implements PersistentUserI,
     return $photo;
   }
 
-  private function buildPhotoFilename(TransferablePhoto $photo) {
+  private function buildPhotoFilename(TypoherbariumPhoto $photo) {
     
     // Workaround...
     $context = $this;
@@ -471,7 +470,7 @@ implements PersistentUserI,
     return $baseFilename;
   }
 
-  private function createPhotoFiles(TransferablePhoto $photo) {
+  private function createPhotoFiles(TypoherbariumPhoto $photo) {
     
     // Workaround...
     $context = $this;
@@ -518,7 +517,7 @@ implements PersistentUserI,
     $context = $this;
 
     // If we are already given the Photo object.
-    if($photoId instanceof TransferablePhoto)
+    if($photoId instanceof TypoherbariumPhoto)
       return $photoId;
     
     // Fetch the Photo.
@@ -583,7 +582,7 @@ implements PersistentUserI,
 			       else      $photo->exifOrientation = NULL;
 
 			       $photo->exifTimestamp   = $row->date_exif;
-			       $photo->exifGeolocation = TransferableGeolocation::fromLatitudeAndLongitude($row->latitude_exif, $row->longitude_exif);
+			       $photo->exifGeolocation = TypoherbariumGeolocation::fromLatitudeAndLongitude($row->latitude_exif, $row->longitude_exif);
 
 			       // ROIs
 			       $roisQuery = 
@@ -619,8 +618,8 @@ implements PersistentUserI,
     $context = $this;
     
     // Emulating function overloading: 
-    // If we are already given the TransferablePhoto object.
-    if($photoId instanceof TransferablePhoto) {
+    // If we are already given the TypoherbariumPhoto object.
+    if($photoId instanceof TypoherbariumPhoto) {
       $photo = $photoId;
       $photoId = $photo->id;
     } else {
@@ -651,7 +650,7 @@ implements PersistentUserI,
 
   }
 
-  private function deletePhotoFiles(TransferablePhoto $photo) {
+  private function deletePhotoFiles(TypoherbariumPhoto $photo) {
     
     // Workaround...
     $context = $this;
@@ -668,7 +667,7 @@ implements PersistentUserI,
 
   }
 
-  private function deletePhotoSourceFile(TransferablePhoto $photo) {
+  private function deletePhotoSourceFile(TypoherbariumPhoto $photo) {
     
     // Workaround...
     $context = $this;
@@ -684,7 +683,7 @@ implements PersistentUserI,
 
   }
 
-  private function deletePhotoVersionsFiles(TransferablePhoto $photo) {
+  private function deletePhotoVersionsFiles(TypoherbariumPhoto $photo) {
     
     // Workaround...
     $context = $this;
@@ -802,7 +801,7 @@ implements PersistentUserI,
     $context = $this;
 
     // If we are already given the ROI object.
-    if($roiId instanceof TransferableROI)
+    if($roiId instanceof TypoherbariumROI)
       return $roiId;
 
     // Fetch ROI.
@@ -946,8 +945,8 @@ implements PersistentUserI,
     $context = $this;
 
     // Emulating function overloading: 
-    // If we are already given the TransferableROI object.
-    if($roiId instanceof TransferableROI) {
+    // If we are already given the TypoherbariumROI object.
+    if($roiId instanceof TypoherbariumROI) {
       $roi = $roiId;
       $roiId = $roi->id;
     } else {

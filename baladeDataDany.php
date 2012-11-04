@@ -7,7 +7,7 @@ require_once("myPhpLib.php");
 require_once("debug.php");
 require_once("config.php");
 
-require_once("transferableModel.php");
+require_once("typoherbariumModel.php");
 require_once("dbConnection.php");
 
 Debug::init("observationReceive", False);

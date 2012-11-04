@@ -13,7 +13,7 @@ class AnswersPatternModel {
 
   function __toString() { return "<pre>" . var_export($this, True) . "</pre>"; }
 
-  static public function create(TransferableObservation $obs) {
+  static public function create(TypoherbariumObservation $obs) {
 
     // Prepare AnswersPatternModel.
     $model = new AnswersPatternModel();

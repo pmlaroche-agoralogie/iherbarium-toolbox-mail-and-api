@@ -4,7 +4,133 @@ namespace iHerbarium;
 require_once("myPhpLib.php");
 require_once("dbConnection.php");
 
+require_once("transferableModel.php");
 require_once("transferableUserInfo.php");
+
+require_once("exif.php");
+
+//
+// The Preparator class goes here for now, 
+// but it should be probably reassigned
+// somewhere else.
+//
+class Preparator {
+
+  protected static function getRoughGeolocation(array $photos) {
+    if(count($photos) > 0) {
+      $anyPhoto = array_first($photos);
+      return $anyPhoto->exifGeolocation;
+    }
+    else {
+      return
+      array(
+        "latitude"  => 0,
+        "longitude" => 0
+        );
+
+    }
+  }
+
+  public static function prepareForTransfer($protocolObs) {
+
+    // Observation
+    $obs = new \stdClass();
+    $obs->id          = $protocolObs->id;
+    $obs->user        = $protocolObs->user->eMail;
+    $obs->uid         = NULL;
+    $obs->timestamp   = NULL;
+    $obs->geolocation = NULL;
+    $obs->privacy     = "public";
+    $obs->kind        = 1;
+    $obs->plantSize   = "";
+    $obs->commentary  = "";
+    $obs->photos      = array();
+
+    //echo("<pre>" . var_export($obs, True)   . "</pre>");
+    
+    // Photos
+    foreach($protocolObs->photos as $protocolPhoto) {
+      $localDir = Config::get("transferablePhotoLocalDir");
+      
+      // Prepare local name.
+      $localFilename = "photo_" . time() . "_" . rand() . ".jpg";
+
+      // Prepare local path.
+      $saveToPath = $localDir . $localFilename;
+
+      // Save photo.
+      debug("Debug", "prepareForTransfer()", "Writing observation's photo to $saveToPath!");
+      file_put_contents($saveToPath, $protocolPhoto->image);
+
+      // Geoloc
+      $geoloc = 
+      array(
+        "latitude"  => 0,
+        "longitude" => 0
+        );
+
+      $exif = exif_read_data($saveToPath);
+      
+      if($exif != False)
+        $geoloc = Exif::coordinatesFromExif($exif);
+
+      // Photo
+      $photo = new \stdClass();
+      $photo->obsId            = $protocolObs->id;
+      $photo->remoteDir        = Config::get("transferablePhotoRemoteDir");
+      $photo->remoteFilename   = $localFilename;
+      $photo->localDir         = NULL;
+      $photo->localFilename    = NULL;
+      $photo->depositTimestamp = $protocolPhoto->timestamp;
+      $photo->userTimestamp    = NULL;
+      $photo->exifTimestamp    = (array_key_exists('DateTimeOriginal', $exif) ? strtotime($exif['DateTimeOriginal']) : NULL);
+      $photo->exifOrientation  = (array_key_exists('Orientation',      $exif) ? $exif['Orientation']                 : NULL);
+      $photo->exifGeolocation  = $geoloc;
+      $photo->rois             = array();
+      
+      //echo("<pre>" . var_export($photo, True) . "</pre>");
+
+      // ROI
+      if($protocolPhoto->tag) {
+        
+        // Rectangle
+        $rect = new \stdClass();
+        $rect->left    = 0.02;
+        $rect->top     = 0.02;
+        $rect->right   = 0.98;
+        $rect->bottom  = 0.98;
+
+        // ROI
+        $roi = new \stdClass();
+        $roi->rectangle = $rect;
+        $roi->tag = $protocolPhoto->tag;
+
+        //echo("<pre>" . var_export($roi, True) . "</pre>");
+
+        array_push($photo->rois, $roi);
+      }
+      
+      // Photo ready
+      array_push($obs->photos, $photo);
+
+
+      // Comments - add the Protocol Photo comments to Observation's comments.
+      /*
+      if($protocolPhoto->comments) {
+        if($obs->commentary) $obs->commentary .= " ";
+        $obs->commentary .= $protocolPhoto->comments;
+      }
+      */
+    }
+
+    // Get rough geolocation.
+    $obs->geolocation = static::getRoughGeolocation($obs->photos);
+
+    debug("Ok", "PrepareForTransfer()", "Prepared.", var_export($obs, True) );
+    return $obs;
+  }
+}
+
 
 // Remote Storage
 
