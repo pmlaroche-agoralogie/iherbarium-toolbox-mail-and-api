@@ -76,9 +76,18 @@ if($response['error'] == "")
 				 else
 				    $password = $call_parameters->password;
 				  
+				  if(isset($call_parameters->name) )
+				    $name = $call_parameters->name;
+				    else
+				    {
+				    $left = strpos($call_parameters->username,"@");
+				    if($left <1)
+				       $left=strlen($call_parameters->username);
+				    $name = substr($call_parameters->username,0,$left);
+				    }
 				 // Create the user.
 				 //$localTypoherbarium->createUser($call_parameters->username, $password, $call_parameters->language);
-				 $sql_create_account="insert  INTO `fe_users`  (`username`, `password`, `language`) values ( '".$call_parameters->username."','".$password."','".$call_parameters->language."' );";
+				 $sql_create_account="insert  INTO `fe_users`  (`username`,`email`, `password`, `name`, `language`,`pid`,`usergroup`) values ( '".$call_parameters->username."','".$call_parameters->username."','".$password."','".$name."','".$call_parameters->language."',2,'1' );";
 				 
 				 $resultat = mysql_query($sql_create_account) or die ($sql_create_account);
 		
