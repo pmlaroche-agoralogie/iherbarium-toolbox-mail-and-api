@@ -8,8 +8,9 @@ require_once("logger.php");
 
 require_once("typoherbariumModel.php");
 require_once("dbConnection.php");
-
 require_once("persistentObject.php");
+
+require_once("determinationProtocol.php");
 
 
 // Setting up the Debug and Logger modules.
@@ -162,6 +163,12 @@ if ($_POST) {
 
   // Success!
   observationReceiveResult::success($obs->id);
+
+  // Notify the Determination Protocol
+  $p = DeterminationProtocol::getProtocol("Standard");
+  $reObs = $localTypoherbarium->loadObservation($obs->id);
+  $p->addedObservation($reObs);
+
 } 
 else {
   debug("Error", me(), "No POST data!");

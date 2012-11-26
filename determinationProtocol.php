@@ -9,6 +9,8 @@ require_once("config.php");
 require_once("typoherbariumModel.php");
 require_once("persistentObject.php");
 
+
+/* This interface should be rewritten. */
 interface DeterminationProtocolI {
   public function addedROI(TypoherbariumROI $roi);
   public function modifiedROI(TypoherbariumROI $roi);
@@ -19,6 +21,25 @@ interface DeterminationProtocolI {
   public function answerReceived(TypoherbariumROIAnswer $answer);
 }
 
+/*
+ * The DeterminationProtocol class is a mess. It is however the center piece of the determination
+ * system: it coordinates all the important objects (observations, questions, tasks etc.),
+ * effectively making the determination process happen.
+ * 
+ * It was supposed to be event-driven, so that each of its exposed methods reacts to some
+ * external event happening (like "an observation was added", "a ROI was modified", "an answer
+ * was received" etc.), implementing neatly the designed deterimination algorithm.
+ *
+ * However it got cluttered with many many similarily named methods (some of which are just
+ * internal functions and some represent external exents), it contains a lot too much concrete
+ * logic for handling some stuff (like the completely bloated noMoreQuestions method) and,
+ * last but not least, it brings together many of the little shortcomings located in different parts
+ * of the rest of the code (which is far from being perfect), so it needs to work around all of them
+ * (look for example at what's going on in the addTasks method).
+ * 
+ * Thus, the DeterminationProtocol class is really messy and it would be great if one day somebody
+ * cleaned it up at least a little little bit :)
+ */
 class DeterminationProtocol 
 implements DeterminationProtocolI {
 
@@ -182,11 +203,32 @@ implements DeterminationProtocolI {
     return $this->addedROI($roi);
   }
 
+  protected function isObsFitForDetermination(TypoherbariumObservation $obs) {
+
+    // Should this Observation is good enough to be added to the 
+    // flow of the Observations which will be identified?
+
+    // TODO 
+    // No logic here for now! We just presume it is never fit for determination.
+    return false;
+
+  }
 
   public function addedObservation(TypoherbariumObservation $obs) {
 
-    // If added an Observation then added all it's ROIs.
-    array_iter( array($this, "addedROI"), $obs->getROIs() );
+    // Is the newly added Observation good enough for determination?
+    if( $this->isObsFitForDetermination($obs) ) {
+
+      // The Observation is fit for determination!
+
+      // If we an Observation was added, we should all it's ROIs.
+      array_iter( array($this, "addedROI"), $obs->getROIs() );
+
+    } else {
+
+      // The Observation is not fit for determination!
+
+    }
 
   }
 
