@@ -15,6 +15,7 @@ language : a string (value in fr, en, pt, de, it, br, es)
 the information can also have
 first name : a string
 last name : a string
+avatar : an URL of a picture (already upload with apipost_data.php)
 
 the script respond a json string, containing
 responsevalue -> ok or nok
