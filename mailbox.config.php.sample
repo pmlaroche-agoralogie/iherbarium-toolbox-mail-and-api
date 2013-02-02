@@ -28,6 +28,7 @@ function getMailboxConfig() {
 	"PWD_EXPERT_DE"  => "PWD_EXPERT_DE",
 	"PWD_DEPOT_DE"   => "PWD_DEPOT_DE"
 	);
-	};
+
+};
 
 ?>

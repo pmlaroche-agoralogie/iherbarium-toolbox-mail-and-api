@@ -21,6 +21,7 @@ function getDbConfig() {
      "DATABASE_LOCAL_DEV" => "DATABASE_LOCAL_DEV",
      "DATABASE_LOCAL"     => "DATABASE_LOCAL"
 	);
-	};
+
+};
 
 ?>
