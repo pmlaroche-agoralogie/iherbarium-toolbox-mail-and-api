@@ -115,6 +115,17 @@ abstract class TypoherbariumTask {
     return $task;
   }
 
+  static public function makeAddObservationToDeterminationFlowTask(TypoherbariumObservation $obs) {
+
+    $task = new TypoherbariumAddObservationToDeterminationFlowTask();
+
+    $task
+      ->setContext($obs)
+      ->setParameters(NULL);
+    
+    return $task;
+  }
+
 }
 
 /* Answerable tasks can be answered by users. */
@@ -454,6 +465,16 @@ class TypoherbariumComputeObservationSimilaritiesTask
 extends TypoherbariumComputableTask {
 
   public function getType()           { return "ComputeObservationSimilarities"; }
+
+  public function getContextType()    { return "Observation"; }
+  public function getParametersType() { return "ComputationParameters"; }
+  
+}
+
+class TypoherbariumAddObservationToDeterminationFlowTask
+extends TypoherbariumComputableTask {
+
+  public function getType()           { return "AddObservationToDeterminationFlow"; }
 
   public function getContextType()    { return "Observation"; }
   public function getParametersType() { return "ComputationParameters"; }

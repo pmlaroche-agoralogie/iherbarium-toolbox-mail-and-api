@@ -2007,6 +2007,7 @@ implements PersistentUserI,
       $taskContext = $task->getRoiId();
       break;
     case "ComputeObservationSimilarities":
+    case "AddObservationToDeterminationFlow":
       // In this case it's the Observation's id.
       $taskContext = $task->context->id;
       break;
@@ -2020,6 +2021,7 @@ implements PersistentUserI,
       $taskParams = $task->getQuestionId();
       break;
     case "ComputeObservationSimilarities":
+    case "AddObservationToDeterminationFlow":
       // In this case there are no parameters.
       $taskParams = $task->parameters;
       break;
@@ -2196,6 +2198,17 @@ implements PersistentUserI,
 				   ->setId($taskId);
 
 				 break;
+
+             case "AddObservationToDeterminationFlow":
+         $obsId = $taskContext;
+         
+         $obs = $context->loadObservation($obsId);
+         
+         $task = 
+           TypoherbariumTask::makeAddObservationToDeterminationFlowTask($obs)
+           ->setId($taskId);
+
+         break;
 			       }
 
 			       // Priority

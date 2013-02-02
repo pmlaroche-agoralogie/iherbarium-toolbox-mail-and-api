@@ -62,6 +62,13 @@ case 'DoTasks' :
       $local->deleteTask($task);
       echo "<p>Computed Observation similarities for Observation $obs->id!</p>";
       break;
+
+    case "AddObservationToDeterminationFlow":
+      $obs = $task->context;
+      $protocol->addedObservation($obs);
+      $local->deleteTask($task);
+      echo "<p>Added Observation $obs->id to determination flow!</p>";
+      break;
       
     default:
       echo "<p>I don't know how to perform this type of Task!</p>";

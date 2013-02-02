@@ -164,10 +164,15 @@ if ($_POST) {
   // Success!
   observationReceiveResult::success($obs->id);
 
-  // Notify the Determination Protocol
-  $p = DeterminationProtocol::getProtocol("Standard");
+
+  // Create the AddObservationToDeterminationFlow task.
   $reObs = $localTypoherbarium->loadObservation($obs->id);
-  $p->addedObservation($reObs);
+
+  $task =
+    TypoherbariumTask::makeAddObservationToDeterminationFlowTask($reObs)
+    ->setProtocol('Standard');
+
+  $localTypoherbarium->addTask($task);
 
 } 
 else {
