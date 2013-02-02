@@ -210,7 +210,8 @@ implements DeterminationProtocolI {
 
     // TODO 
     // No logic here for now! We just presume it is never fit for determination.
-    return false;
+    // return false;
+    return true;
 
   }
 
@@ -607,14 +608,20 @@ implements DeterminationProtocolI {
     return $comparator;
   }
 
-  protected function getReferenceObservations() {
+  protected function getReferenceObservations(TypoherbariumObservation $obs) {
     $local = LocalTypoherbariumDB::get();
     
+    /*
     $groupId = 3; // "generique france"
     
     $group = $local->loadGroup($groupId);
 
     return $group->getAllObservations();
+    */
+
+    $similaritySet = $local->loadSimilaritySet($obs->id);
+
+    return $similaritySet;
   }
 
   public function getSimilarObservations(TypoherbariumObservation $obs) {
@@ -627,7 +634,13 @@ implements DeterminationProtocolI {
     
     $comparator = $this->getComparator();
     
-    $observations = $this->getReferenceObservations();
+    $similaritySet = $this->getReferenceObservations($obs);
+
+    $observations =
+      array_map(function($obsWithWeight) use ($local) { 
+        $obsId = $obsWithWeight->id;
+        return $local->loadObservation($obsId);
+      }, $similaritySet);
 
     // Models
     $models = array_map(function($obs) { return APModel::create($obs); }, $observations);
