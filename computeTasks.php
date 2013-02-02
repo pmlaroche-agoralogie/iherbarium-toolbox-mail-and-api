@@ -65,9 +65,17 @@ case 'DoTasks' :
 
     case "AddObservationToDeterminationFlow":
       $obs = $task->context;
-      $protocol->addedObservation($obs);
-      $local->deleteTask($task);
-      echo "<p>Added Observation $obs->id to determination flow!</p>";
+      $similaritySet = $local->loadSimilaritySet($obs->id);
+      if($similaritySet == NULL) {
+        // If the similarity set doesn't exist it means that we have to do nothing and wait some more. 
+        echo "<p>Similarity set for Observation $obs->id doesn't exist yet...</p>";
+      } else {
+        // If the similarity set exists, we can proceed.
+        //echo "<h4>Similarity Set</h4><pre>" . var_export($similaritySet, True) . "</pre>";
+        $protocol->addedObservation($obs);
+        $local->deleteTask($task);
+        echo "<p>Added Observation $obs->id to determination flow!</p>";
+      }
       break;
       
     default:

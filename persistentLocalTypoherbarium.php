@@ -2746,6 +2746,33 @@ implements PersistentUserI,
     
   }
 
+  public function loadSimilaritySet($obsId) {
+
+    // Workaround...
+    $context = $this;
+
+    // SimilaritySet Query.
+    $similaritySetQuery =
+      "SELECT * " .
+      " FROM iherba_similarity_set" .
+      " WHERE observation_id = " . $context->quote($obsId);
+
+    return
+      $context->singleResult(// Query
+           $similaritySetQuery,
+        
+           // If the Similarity Set exists...
+           function($row) use ($context) {
+             $t = json_decode($row->weight_for_nearest_common_plants);
+             return $t;
+           },
+        
+           // If the Similarity Set doesn't exist...
+           function() use ($context) {
+             return NULL;
+           }); 
+
+  }
 
 }
 
