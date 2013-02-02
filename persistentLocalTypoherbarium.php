@@ -2678,6 +2678,21 @@ implements PersistentUserI,
     
   }
 
+  public function createNotification($messageType, $parameters) {
+
+    // Workaround...
+    $context = $this;
+    
+    $instertNotification =
+      "INSERT INTO iherba_notification(message_type, parameters) " .
+      " VALUES( " . $context->quote($messageType) .
+      " , "       . $context->quote($parameters) .
+      " )";
+    
+    $affectedNotification = $context->exec($instertNotification);
+    
+  }
+
   public function logQuestionsFinished(TypoherbariumObservation $obs, $topResults) {
 
     /* 

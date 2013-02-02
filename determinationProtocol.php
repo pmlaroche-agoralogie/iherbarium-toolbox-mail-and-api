@@ -395,6 +395,16 @@ implements DeterminationProtocolI {
     if($countResults <= 1) {
       echo "<p>Case 0: YES</p>";
       $local->logDeterminationFinished($obs, false, "TooSmallReferenceGroup", "Reference group size = $countResults.");
+
+      $parameters = array(
+        "obsId"              => $obs->id,
+        "owner"              => $obs->uid,
+        "verdict"            => "TooSmallReferenceGroup",
+        "referenceGroupSize" => $countResults
+      );
+
+      $local->createNotification("expert-system-say", json_encode($parameters));
+      
       return;
     }
 
@@ -417,6 +427,18 @@ implements DeterminationProtocolI {
       $topObsId = $topObs->id;
 
       $local->logDeterminationFinished($obs, true, "NoComparisonsNeeded", "The best observation = $topObsId. Top score = $topScore, second score = $secondScore.");
+
+      $parameters = array(
+        "obsId"       => $obs->id,
+        "owner"       => $obs->uid,
+        "verdict"     => "NoComparisonsNeeded",
+        "topObsId"    => $topObsId,
+        "topScore"    => $topScore,
+        "secondScore" => $secondScore
+      );
+
+      $local->createNotification("expert-system-say", json_encode($parameters));
+      
       return;
     }
     echo "<p>Case A: NO</p>";
@@ -425,6 +447,8 @@ implements DeterminationProtocolI {
     // Case B : Too many observations in top 5% ?
 
     $margin = 0.8;
+    $marginInPercents = (1 - $margin) * 100;
+
     $minScore = $margin * $topScore;
 
     $topResults =
@@ -438,13 +462,25 @@ implements DeterminationProtocolI {
 
     $countObsToCompare = count($topObss);
 
-    echo "<p>Test B: Too many observations in top " . (1 - $margin) * 100 . "% ?</p>";
+
+    echo "<p>Test B: Too many observations in top " . $marginInPercents . "% ?</p>";
     echo "<p>Test B: countObsToCompare = $countObsToCompare</p>";
 
     if( $countObsToCompare > 10 ) {
       echo "<p>Test B: YES</p>";
 
-      $local->logDeterminationFinished($obs, false, "TooMuchComparisonsNedded", "There is $countObsToCompare observations in the top " . (1 - $margin) * 100 . "%");
+      $local->logDeterminationFinished($obs, false, "TooMuchComparisonsNedded", "There is $countObsToCompare observations in the top " . $marginInPercents . "%");
+
+      $parameters = array(
+        "obsId"               => $obs->id,
+        "owner"               => $obs->uid,
+        "verdict"             => "TooMuchComparisonsNedded",
+        "margin"              => $marginInPercents,
+        "numberOfObsInMargin" => $countObsToCompare
+      );
+
+      $local->createNotification("expert-system-say", json_encode($parameters));
+
       return;
     }
     echo "<p>Test B: NO</p>";
@@ -531,6 +567,21 @@ implements DeterminationProtocolI {
 	array_map(function($result) { return "(" . $result['obs']->id . " : " .  $result['result']['similarity'] . "),"; }, $topResults);
 
       $local->logDeterminationFinished($obs, true, "ComparisonsFinished", mkString($resultsStrings, "Results: ", " ", ""));
+
+      $resultsArray =
+        array_map(function($result) { return array(
+          "obsId"      => $result['obs']->id,
+          "similarity" => $result['result']['similarity']);
+        }, $topResults);
+
+      $parameters = array(
+        "obsId"   => $obs->id,
+        "owner"   => $obs->uid,
+        "verdict" => "ComparisonsFinished",
+        "results" => $resultsArray
+      );
+
+      $local->createNotification("expert-system-say", json_encode($parameters));
     }
     
     // 1. Rebuild and recompare the models using new informations
