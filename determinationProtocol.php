@@ -354,6 +354,8 @@ implements DeterminationProtocolI {
 
        + $results[$i]['result'] is the detailed result of it's comparison with $obs,
        generated directly by APComparator.
+
+       + $results[$i]['weightedSimilarity'] is the weighted similarity.
     */
 
     $countResultsToLog = 20;
@@ -415,8 +417,8 @@ implements DeterminationProtocolI {
 
     $ratioTopSecondNeeded = 0.8;
     
-    $topScore    = $results[0]['result']['similarity'];
-    $secondScore = $results[1]['result']['similarity'];
+    $topScore    = $results[0]['weightedSimilarity'];
+    $secondScore = $results[1]['weightedSimilarity'];
 
     echo "<p>Case A: Maybe the top result is super good ?</p>";
     echo "<p>Case A: ($ratioTopSecondNeeded * $topScore) > $secondScore</p>";
@@ -455,7 +457,7 @@ implements DeterminationProtocolI {
     $topResults =
       array_filter(
 		   function($result) use ($minScore) { 
-		     return $result['result']['similarity'] > $minScore;
+		     return $result['weightedSimilarity'] > $minScore;
 		   },
 		   $results);
 
@@ -476,7 +478,7 @@ implements DeterminationProtocolI {
         "obsId"               => $obs->id,
         "owner"               => $obs->uid,
         "verdict"             => "TooMuchComparisonsNedded",
-        "margin"              => $marginInPercents,
+        "marginInPercents"    => $marginInPercents,
         "numberOfObsInMargin" => $countObsToCompare
       );
 
@@ -565,14 +567,14 @@ implements DeterminationProtocolI {
       $topResults = array_slice($results, 0, $maxResults);
 
       $resultsStrings =
-	array_map(function($result) { return "(" . $result['obs']->id . " : " .  $result['result']['similarity'] . "),"; }, $topResults);
+	array_map(function($result) { return "(" . $result['obs']->id . " : " .  $result['weightedSimilarity'] . "),"; }, $topResults);
 
       $local->logDeterminationFinished($obs, true, "ComparisonsFinished", mkString($resultsStrings, "Results: ", " ", ""));
 
       $resultsArray =
         array_map(function($result) { return array(
           "obsId"      => $result['obs']->id,
-          "similarity" => $result['result']['similarity']);
+          "similarity" => $result['weightedSimilarity']);
         }, $topResults);
 
       $parameters = array(
@@ -610,14 +612,6 @@ implements DeterminationProtocolI {
 
   protected function getReferenceObservations(TypoherbariumObservation $obs) {
     $local = LocalTypoherbariumDB::get();
-    
-    /*
-    $groupId = 3; // "generique france"
-    
-    $group = $local->loadGroup($groupId);
-
-    return $group->getAllObservations();
-    */
 
     $similaritySet = $local->loadSimilaritySet($obs->id);
 
@@ -636,11 +630,22 @@ implements DeterminationProtocolI {
     
     $similaritySet = $this->getReferenceObservations($obs);
 
+    $observationIds     = array();
+    $observationWeights = array();
+    foreach($similaritySet as $index => $obsIdAndWeight) {
+      $id     = $obsIdAndWeight->id;
+      $weight = $obsIdAndWeight->weight;
+      $observationIds[$id]     = $id;
+      $observationWeights[$id] = $weight;
+    }
+
+    echo "<h4>observationWeights</h4><pre>" . var_export($observationWeights, True) . "</pre>";
+    echo "<h4>observationIds</h4><pre>" . var_export($observationIds, True) . "</pre>";
+
     $observations =
-      array_map(function($obsWithWeight) use ($local) { 
-        $obsId = $obsWithWeight->id;
+      array_map(function($obsId) use ($local) { 
         return $local->loadObservation($obsId);
-      }, $similaritySet);
+      }, $observationIds);
 
     // Models
     $models = array_map(function($obs) { return APModel::create($obs); }, $observations);
@@ -655,25 +660,39 @@ implements DeterminationProtocolI {
 		  return $cmpModels;
 		}, $models);
 
-    // Sort by similarity of models.
-    uasort($cmpResults, 
-	   function($r1, $r2) { 
-	     return - cmp(
-			  $r1['similarity'],
-			  $r2['similarity']
-			  ); 
-	   } );
-
     //echo "<h4>CmpModels</h4><pre>" . var_export($cmpResults, True) . "</pre>";
 
     $results = array();
     foreach($cmpResults as $obsId => $cmpResult) {
-      $results[] = array("obs" => $observations[$obsId], "result" => $cmpResult);
+
+      $weightedSimilarity = $observationWeights[$obsId] * $cmpResult['similarity'];
+
+      $results[] = array(
+        "obs"                => $observations[$obsId], 
+        "result"             => $cmpResult,
+        "weightedSimilarity" => $weightedSimilarity
+      );
+
+    };
+
+    // Sort by weighted similarity.
+    uasort($results, 
+     function($r1, $r2) { 
+       return - cmp(
+        $r1['weightedSimilarity'],
+        $r2['weightedSimilarity']
+        ); 
+     } );
+
+    $orderedResults = array();
+    foreach($results as $index => $result) {
+      $orderedResults[] = $result;
     }
+    
 
-    //echo "<h4>Results</h4><pre>" . var_export($results, True) . "</pre>";
+    echo "<h4>orderedResults</h4><pre>" . var_export($orderedResults, True) . "</pre>";
 
-    return $results;
+    return $orderedResults;
   }
 
   public function generateComparisonsForObservation(TypoherbariumObservation $obs, $max = 5) {

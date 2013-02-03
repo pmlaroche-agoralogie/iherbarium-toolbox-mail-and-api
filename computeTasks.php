@@ -66,7 +66,7 @@ case 'DoTasks' :
     case "AddObservationToDeterminationFlow":
       $obs = $task->context;
       $similaritySet = $local->loadSimilaritySet($obs->id);
-      if($similaritySet == NULL) {
+      if(is_null($similaritySet)) {
         // If the similarity set doesn't exist it means that we have to do nothing and wait some more. 
         echo "<p>Similarity set for Observation $obs->id doesn't exist yet...</p>";
       } else {
