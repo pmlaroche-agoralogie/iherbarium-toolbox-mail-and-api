@@ -639,8 +639,8 @@ implements DeterminationProtocolI {
       $observationWeights[$id] = $weight;
     }
 
-    echo "<h4>observationWeights</h4><pre>" . var_export($observationWeights, True) . "</pre>";
-    echo "<h4>observationIds</h4><pre>" . var_export($observationIds, True) . "</pre>";
+    //echo "<h4>observationWeights</h4><pre>" . var_export($observationWeights, True) . "</pre>";
+    //echo "<h4>observationIds</h4><pre>" . var_export($observationIds, True) . "</pre>";
 
     $observations =
       array_map(function($obsId) use ($local) { 
@@ -690,7 +690,7 @@ implements DeterminationProtocolI {
     }
     
 
-    echo "<h4>orderedResults</h4><pre>" . var_export($orderedResults, True) . "</pre>";
+    //echo "<h4>orderedResults</h4><pre>" . var_export($orderedResults, True) . "</pre>";
 
     return $orderedResults;
   }
