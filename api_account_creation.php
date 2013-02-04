@@ -1,7 +1,7 @@
 <?php
 
 /*
- Receive call to a from a smartphone or other servers, in order to createa new account
+ Receive call to a from a smartphone or other servers, in order to create a new account
 
 the call has one parameter, a json encoded string named information
 
@@ -11,11 +11,12 @@ apiversion -> for now, must be 1 is an integer
 username : a string
 password : a string
 language : a string (value in fr, en, pt, de, it, br, es)
+checksum : a hash code made from a private key (one by caller_id) and other parameters
 
 the information can also have
 first name : a string
 last name : a string
-avatar : an URL of a picture (already upload with apipost_data.php)
+avatar : an URL of a picture (already uploaded with apipost_data.php)
 
 the script respond a json string, containing
 responsevalue -> ok or nok
@@ -66,8 +67,15 @@ if($response['error'] == "")
 		$resultat = mysql_query($sql_mot_de_passe) or die ($sql_mot_de_passe);
 		if(mysql_num_rows($resultat)>0)
 		  $response['error'] = "this username already exists on the server";
-		
-		if($response['error'] == "")
+		  
+	       //compute a valid chcsum which has to be computed on the mobile app
+	       $privatekey['iphonev1']="xxxxxxxxxxxxxxxxxxxxx";//to be replaced by the real key, not public...
+	       if ($call_parameters->caller_id!='iphonev1')
+		  $response['error'] = "this username already exists on the server";
+		  
+	       $goodchecksum = md5($privatekey[$call_parameters->caller_id].$call_parameters->username);
+	       
+	       if($response['error'] == "")
 				{
 				 // Create a new User.
 				 if($call_parameters->password=="")
