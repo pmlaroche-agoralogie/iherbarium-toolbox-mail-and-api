@@ -336,6 +336,20 @@ implements DeterminationProtocolI {
     }
   }
   
+  private function printResults($results) {
+
+    $obsLines = array_mapi(function($index, $result) {
+      $obs   = $result['obs'];
+      $obsId = $obs->id;
+      $similarity = $result['result']['similarity'];
+      $weightedSimilarity = $result['weightedSimilarity'];
+      return "( $index ) Observation $obsId: similarity = $similarity , weightedSimilarity = $weightedSimilarity";
+    }, $results);
+
+    echo mkString($obsLines, "<p>Results:</p><ul><li>", "</li><li>", "</li></ul>");
+
+  }
+
   public function noMoreQuestions(TypoherbariumObservation $obs) {
     
     $local = LocalTypoherbariumDB::get();
@@ -675,6 +689,9 @@ implements DeterminationProtocolI {
 
     };
 
+    //echo "<h4>results</h4>"; //<pre>" . var_export($results, True) . "</pre>";
+    //$this->printResults($results);
+
     // Sort by weighted similarity.
     uasort($results, 
      function($r1, $r2) { 
@@ -690,8 +707,9 @@ implements DeterminationProtocolI {
     }
     
 
-    //echo "<h4>orderedResults</h4><pre>" . var_export($orderedResults, True) . "</pre>";
-
+    //echo "<h4>orderedResults</h4>"; //<pre>" . var_export($orderedResults, True) . "</pre>";
+    //$this->printResults($orderedResults);
+    
     return $orderedResults;
   }
 
