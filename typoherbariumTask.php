@@ -115,6 +115,17 @@ abstract class TypoherbariumTask {
     return $task;
   }
 
+  static public function makeComparisonsFinishedTask(TypoherbariumObservation $obs) {
+
+    $task = new TypoherbariumComparisonsFinishedTask();
+
+    $task
+      ->setContext($obs)
+      ->setParameters(NULL);
+    
+    return $task;
+  }
+
   static public function makeAddObservationToDeterminationFlowTask(TypoherbariumObservation $obs) {
 
     $task = new TypoherbariumAddObservationToDeterminationFlowTask();
@@ -465,6 +476,16 @@ class TypoherbariumComputeObservationSimilaritiesTask
 extends TypoherbariumComputableTask {
 
   public function getType()           { return "ComputeObservationSimilarities"; }
+
+  public function getContextType()    { return "Observation"; }
+  public function getParametersType() { return "ComputationParameters"; }
+  
+}
+
+class TypoherbariumComparisonsFinishedTask
+extends TypoherbariumComputableTask {
+
+  public function getType()           { return "ComparisonsFinished"; }
 
   public function getContextType()    { return "Observation"; }
   public function getParametersType() { return "ComputationParameters"; }

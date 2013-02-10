@@ -573,32 +573,16 @@ implements DeterminationProtocolI {
 		    );
 
     $countTasksLeft = count($tasksLeft);
-
-    $maxResults = 20;
     
     if($countTasksLeft == 0) {
-      $results = $this->getSimilarObservations($obs);
-      $topResults = array_slice($results, 0, $maxResults);
+        
+        $comparisonsFinishedTask =
+          TypoherbariumTask::makeComparisonsFinishedTask($obs)
+          ->setProtocol('Standard');
 
-      $resultsStrings =
-	array_map(function($result) { return "(" . $result['obs']->id . " : " .  $result['weightedSimilarity'] . "),"; }, $topResults);
+        //echo "<p>$comparisonsFinishedTask<p>";
 
-      $local->logDeterminationFinished($obs, true, "ComparisonsFinished", mkString($resultsStrings, "Results: ", " ", ""));
-
-      $resultsArray =
-        array_map(function($result) { return array(
-          "obsId"      => $result['obs']->id,
-          "similarity" => $result['weightedSimilarity']);
-        }, $topResults);
-
-      $parameters = array(
-        "obsId"   => $obs->id,
-        "owner"   => $obs->uid,
-        "verdict" => "ComparisonsFinished",
-        "results" => $resultsArray
-      );
-
-      $local->createNotification("expert-system-say", json_encode($parameters));
+        $local->addTask($comparisonsFinishedTask);
     }
     
     // 1. Rebuild and recompare the models using new informations
@@ -607,6 +591,36 @@ implements DeterminationProtocolI {
     // 4. If not - alarm the expert that you've reached some kind of conclusion
   }
 
+  public function noMoreComparisons(TypoherbariumObservation $obs) {
+    
+    $local = LocalTypoherbariumDB::get();
+
+    $maxResults = 20;
+
+    $results = $this->getSimilarObservations($obs);
+    $topResults = array_slice($results, 0, $maxResults);
+
+    $resultsStrings =
+  array_map(function($result) { return "(" . $result['obs']->id . " : " .  $result['weightedSimilarity'] . "),"; }, $topResults);
+
+    $local->logDeterminationFinished($obs, true, "ComparisonsFinished", mkString($resultsStrings, "Results: ", " ", ""));
+
+    $resultsArray =
+      array_map(function($result) { return array(
+        "obsId"      => $result['obs']->id,
+        "similarity" => $result['weightedSimilarity']);
+      }, $topResults);
+
+    $parameters = array(
+      "obsId"   => $obs->id,
+      "owner"   => $obs->uid,
+      "verdict" => "ComparisonsFinished",
+      "results" => $resultsArray
+    );
+
+    $local->createNotification("expert-system-say", json_encode($parameters));
+
+  }
   
   public function getComparator() {
     $local = LocalTypoherbariumDB::get();
@@ -709,7 +723,7 @@ implements DeterminationProtocolI {
 
     //echo "<h4>orderedResults</h4>"; //<pre>" . var_export($orderedResults, True) . "</pre>";
     //$this->printResults($orderedResults);
-    
+
     return $orderedResults;
   }
 

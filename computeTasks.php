@@ -63,6 +63,13 @@ case 'DoTasks' :
       echo "<p>Computed Observation similarities for Observation $obs->id!</p>";
       break;
 
+    case "ComparisonsFinished":
+      $obs = $task->context;
+      $protocol->noMoreComparisons($obs);
+      $local->deleteTask($task);
+      echo "<p>Finalized the determination for Observation $obs->id!</p>";
+      break;
+
     case "AddObservationToDeterminationFlow":
       $obs = $task->context;
       $similaritySet = $local->loadSimilaritySet($obs->id);
