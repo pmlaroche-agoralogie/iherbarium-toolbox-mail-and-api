@@ -81,7 +81,7 @@ case 'DoTasks' :
         //echo "<h4>Similarity Set</h4><pre>" . var_export($similaritySet, True) . "</pre>";
         $protocol->addedObservation($obs);
         $local->deleteTask($task);
-        echo "<p>Added Observation $obs->id to determination flow!</p>";
+        echo "<p>Added Observation $obs->id to determination flow (or not if was not fit)!</p>";
       }
       break;
       

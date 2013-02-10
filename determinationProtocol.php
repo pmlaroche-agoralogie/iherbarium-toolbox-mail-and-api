@@ -38,7 +38,7 @@ interface DeterminationProtocolI {
  * (look for example at what's going on in the addTasks method).
  * 
  * Thus, the DeterminationProtocol class is really messy and it would be great if one day somebody
- * cleaned it up at least a little little bit :)
+ * cleaned it up at least a little bit :)
  */
 class DeterminationProtocol 
 implements DeterminationProtocolI {
@@ -205,12 +205,35 @@ implements DeterminationProtocolI {
 
   protected function isObsFitForDetermination(TypoherbariumObservation $obs) {
 
-    // Should this Observation is good enough to be added to the 
+    // Is this Observation good enough to be added to the 
     // flow of the Observations which will be identified?
 
-    // TODO 
-    // No logic here for now! We just presume it is never fit for determination.
-    // return false;
+    $local = LocalTypoherbariumDB::get();
+    $results = $this->getSimilarObservations($obs);
+
+    // Preliminary check : One or no results.
+    echo "<p>Preliminary check of the similarity set: Are there only 0 or 1 results?</p>";
+    
+    $countResults = count($results);
+    if($countResults <= 1) {
+
+      echo "<p>Preliminary check: FAILED. Determination aborted with TooSmallReferenceGroup notification.</p>";
+      $local->logDeterminationFinished($obs, false, "TooSmallReferenceGroup", "Reference group size = $countResults.");
+
+      $parameters = array(
+        "obsId"              => $obs->id,
+        "owner"              => $obs->uid,
+        "verdict"            => "TooSmallReferenceGroup",
+        "referenceGroupSize" => $countResults
+      );
+
+      $local->createNotification("expert-system-say", json_encode($parameters));
+      
+      return false;
+    }
+
+    echo "<p>Preliminary check: OK.</p>";
+
     return true;
 
   }
@@ -406,11 +429,15 @@ implements DeterminationProtocolI {
 
     // Case 0 : One or no results.
 
+    /* As this is already checked before (in the preliminary check)
+     * we could probably delete the "Case 0" part here. But better safe than
+     * sorry, hence we leave it here and just check this second time. */
+
     echo "<p>Case 0: Are there only 0 or 1 results ?</p>";
     
     $countResults = count($results);
     if($countResults <= 1) {
-      echo "<p>Case 0: YES</p>";
+      echo "<p>Case 0: YES (this is very strange, as the preliminary check should have found it before!)</p>";
       $local->logDeterminationFinished($obs, false, "TooSmallReferenceGroup", "Reference group size = $countResults.");
 
       $parameters = array(
@@ -575,7 +602,7 @@ implements DeterminationProtocolI {
     $countTasksLeft = count($tasksLeft);
     
     if($countTasksLeft == 0) {
-        
+
         $comparisonsFinishedTask =
           TypoherbariumTask::makeComparisonsFinishedTask($obs)
           ->setProtocol('Standard');
