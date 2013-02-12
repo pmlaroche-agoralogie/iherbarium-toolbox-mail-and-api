@@ -39,6 +39,7 @@ class BaladePlante {
     $long= 0;
     if(isset($_GET['lat']))  $lat  = $_GET['lat'];
     if(isset($_GET['long'])) $long = $_GET['long'];
+
   
     // Fill Plante.
     $plante = new self();
@@ -91,25 +92,26 @@ $db = dbConnection::get($dbName);
 /* Prepare the Answer. */
 
 $answer = new BaladeAnswer();
+$latitude = 48.8894;
+$longitude = 2.3924;
 
-if(isset($_GET['lat'])) {
-  $latitude = $_GET['lat'];
+if(isset($_POST['lat'])) {
+  $latitude = $_POST['lat'];
 }
 else {
-  $latitude = 48.8894;
+  if(isset($_GET['lat'])) 
+  $latitude = $_GET['lat'];
 }
 
-if(isset($_GET['long'])) {
-  $longitude = $_GET['long'];
+if(isset($_POST['long'])) {
+  $longitude = $_POST['long'];
 }
 else{
-  $longitude = 2.3924;
+if(isset($_GET['long'])) 
+  $latitude = $_GET['long'];
 }
-/*
-$latitude = 67.875541;
-$longitude = -161.015625;*/
 
-$ecart = 0.01;
+$ecart = 0.001;
 $limit=0;
 
 while($limit < 30){
@@ -169,5 +171,4 @@ while( $row = $result->fetchRow() ) {
   
 // Return the Answer.
 
- 
 echo (json_encode($answer));  
