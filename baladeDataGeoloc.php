@@ -92,6 +92,8 @@ $db = dbConnection::get($dbName);
 /* Prepare the Answer. */
 
 $answer = new BaladeAnswer();
+
+// centered on pere Lachaise if no parameter
 $latitude = 48.8894;
 $longitude = 2.3924;
 
@@ -99,18 +101,24 @@ if(isset($_POST['lat'])) {
   $latitude = $_POST['lat'];
 }
 else {
-  if(isset($_GET['lat'])) 
-  $latitude = $_GET['lat'];
+  if(isset($_GET['lat'])) {
+      $latitude = $_GET['lat'];
+    }
 }
 
 if(isset($_POST['long'])) {
   $longitude = $_POST['long'];
 }
 else{
-if(isset($_GET['long'])) 
-  $latitude = $_GET['long'];
+  if(isset($_GET['long'])) {
+    $latitude = $_GET['long'];
+  }
 }
+$latitude = str_replace(",",".",$latitude);
+$longitude = str_replace(",",".",$longitude);
 
+//sql injection protection
+if(!is_numeric($latitude) || !is_numeric($longitude))die();
 $ecart = 0.001;
 $limit=0;
 
