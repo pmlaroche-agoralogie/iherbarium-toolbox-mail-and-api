@@ -365,8 +365,9 @@ implements DeterminationProtocolI {
       $obs   = $result['obs'];
       $obsId = $obs->id;
       $similarity = $result['result']['similarity'];
+      $weight = $result['weight'];
       $weightedSimilarity = $result['weightedSimilarity'];
-      return "( $index ) Observation $obsId: similarity = $similarity , weightedSimilarity = $weightedSimilarity";
+      return "( $index ) Observation $obsId: similarity = $similarity , weight = $weight , weightedSimilarity = $weightedSimilarity";
     }, $results);
 
     echo mkString($obsLines, "<p>Results:</p><ul><li>", "</li><li>", "</li></ul>");
@@ -720,18 +721,20 @@ implements DeterminationProtocolI {
     $results = array();
     foreach($cmpResults as $obsId => $cmpResult) {
 
-      $weightedSimilarity = $observationWeights[$obsId] * $cmpResult['similarity'];
+      $weight = $observationWeights[$obsId];
+      $weightedSimilarity = $weight  * $cmpResult['similarity'];
 
       $results[] = array(
         "obs"                => $observations[$obsId], 
         "result"             => $cmpResult,
+	"weight"             => $weight,
         "weightedSimilarity" => $weightedSimilarity
       );
 
     };
 
-    //echo "<h4>results</h4>"; //<pre>" . var_export($results, True) . "</pre>";
-    //$this->printResults($results);
+    echo "<h4>results</h4>"; //<pre>" . var_export($results, True) . "</pre>";
+    $this->printResults($results);
 
     // Sort by weighted similarity.
     uasort($results, 
@@ -748,8 +751,8 @@ implements DeterminationProtocolI {
     }
     
 
-    //echo "<h4>orderedResults</h4>"; //<pre>" . var_export($orderedResults, True) . "</pre>";
-    //$this->printResults($orderedResults);
+    echo "<h4>orderedResults</h4>"; //<pre>" . var_export($orderedResults, True) . "</pre>";
+    $this->printResults($orderedResults);
 
     return $orderedResults;
   }
