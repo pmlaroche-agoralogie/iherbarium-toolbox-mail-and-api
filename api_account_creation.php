@@ -44,7 +44,7 @@ if(isset($_GET['information'])) $information = $_GET['information'];
 				else $response['error'] = "no 'information' parameter";
 if($debug = 1)
 	{
-	$nomfichier = 'informationdata-'.time().'.txt';
+	$nomfichier = 'fromapi/informationdata-'.time().'.txt';
 	$debugfile = fopen($nomfichier, 'w');
 	fwrite($debugfile, $information);
 	fclose($debugfile); 
@@ -66,15 +66,15 @@ if($response['error'] == "")
 		$sql_mot_de_passe="SELECT password FROM  `fe_users`  WHERE  `username` = '".$call_parameters->username."' ;";
 		$resultat = mysql_query($sql_mot_de_passe) or die ($sql_mot_de_passe);
 		if(mysql_num_rows($resultat)>0)
-		  $response['error'] = "this username already exists on the server";
+		  $response['error'] = "this username already exists on the server.";
 		  
 	       //compute a valid chcsum which has to be computed on the mobile app
-	       $privatekey['iphonev1']="xxxxxxxxxxxxxxxxxxxxx";//to be replaced by the real key, not public...
+	       /*$privatekey['iphonev1']="xxxxxxxxxxxxxxxxxxxxx";//to be replaced by the real key, not public...
 	       if ($call_parameters->caller_id!='iphonev1')
 		  $response['error'] = "this username already exists on the server";
 		  
 	       $goodchecksum = md5($privatekey[$call_parameters->caller_id].$call_parameters->username);
-	       
+	       */
 	       if($response['error'] == "")
 				{
 				 // Create a new User.
@@ -107,5 +107,12 @@ if($response['error'] == "")
 	}
 
 if($response['error'] == "")unset($response['error'] );
-echo json_encode($response);	
+echo json_encode($response);
+if($debug = 1)
+	{
+	$nomfichier = 'fromapi/_return_informationdata-'.time().'.txt';
+	$debugfile = fopen($nomfichier, 'w');
+	fwrite($debugfile, json_encode($response));
+	fclose($debugfile); 
+	}
 ?>
