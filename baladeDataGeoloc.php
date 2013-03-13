@@ -119,6 +119,9 @@ $longitude = str_replace(",",".",$longitude);
 
 //sql injection protection
 if(!is_numeric($latitude) || !is_numeric($longitude))die();
+
+if(($latitude==0) &&($longitude==0)){$latitude = 48.8894; $longitude = 2.3924;} //no gps passed
+
 $ecart = 0.001;
 $limit=0;
 
