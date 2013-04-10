@@ -98,8 +98,12 @@ if($response['error'] == "")
 				 //$localTypoherbarium->createUser($call_parameters->username, $password, $call_parameters->language);
 				 $sql_create_account="insert  INTO `fe_users`  (`username`,`email`, `password`, `name`, `language`,`pid`,`usergroup`) values ( '".$call_parameters->username."','".$call_parameters->username."','".$password."','".$name."','".$call_parameters->language."',2,'1' );";
 				 
-				 $resultat = mysql_query($sql_create_account) or die ($sql_create_account);
-		
+				 $resultat = mysql_query($sql_create_account) or die ();
+				 $id_user = mysql_insert_id();
+				 $sql_notification = "INSERT INTO `typoherbarium`.`iherba_notification` (`id_notification`, `ts_creation`, `message_type`, `preferred_language`, `parameters`, `preferred_media`)
+				 VALUES (NULL, CURRENT_TIMESTAMP, 'account-open', 'fr', '".'{"user":"'.$id_user.'"}'."', 'mail');";
+				 $resultat = mysql_query($sql_notification) or die ();
+				 
 				 $response['responsevalue']="ok";
 				 $response['newpassword']=$password;
 				}
