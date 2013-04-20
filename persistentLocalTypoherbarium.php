@@ -759,7 +759,7 @@ implements PersistentUserI,
     $mediaQuery = 
     "UPDATE iherba_medias " .
     " SET" .
-    "   id_obs = "            . $context->quote($obsId) .
+    "   id_observation = "            . $context->quote($obsId) .
     " , date_depot = "        . $context->quote($formatDate($media->depositTimestamp)) .
     " , nom_media_initial = " . $context->quote($media->initialFilename) .
     " , nom_media_final = "   . $context->quote($media->localFilename) .

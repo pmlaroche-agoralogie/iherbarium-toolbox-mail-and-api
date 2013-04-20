@@ -153,7 +153,7 @@ if ($_POST) {
     $media->obsId = $obs->id;
 
     // Copy the Media source file from remote address to local hard drive.
-    $remotePath = $mediaObj->$remoteDir . $mediaObj->$remoteFilename;
+    $remotePath = $mediaObj->remoteDir . $mediaObj->remoteFilename;
     $media = $localTypoherbarium->copyMediaSourceFromRemotePath($media, $remotePath);
 
     // Finally: insert the Media into the database.
