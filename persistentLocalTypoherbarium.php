@@ -759,7 +759,7 @@ implements PersistentUserI,
     $mediaQuery = 
     "UPDATE iherba_medias " .
     " SET" .
-    "   id_observation = "            . $context->quote($obsId) .
+    "   id_observation = "            . $context->quote($media->obsId) .
     " , date_depot = "        . $context->quote($formatDate($media->depositTimestamp)) .
     " , nom_media_initial = " . $context->quote($media->initialFilename) .
     " , nom_media_final = "   . $context->quote($media->localFilename) .
@@ -777,10 +777,15 @@ implements PersistentUserI,
     
     // Build the filename.
     $baseFilename = 
-    "media_" . $media->id . 
+    "media_" . $media->id . substr(strrev(microtime()),0,5).rand(10000,99999).
     "_" . 
     "observation_" . $media->obsId;
 
+    $fileextension = pathinfo($media->initialFilename, PATHINFO_EXTENSION);
+    $authorizedfileextension = array("mp4","avi","mov");
+    if(!in_array($fileextension,$authorizedfileextension))
+      $fileextension = "dat";
+    $baseFilename .= ".".$fileextension;
     return $baseFilename;
   }
 
