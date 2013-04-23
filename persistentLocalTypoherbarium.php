@@ -2211,6 +2211,10 @@ implements PersistentUserI,
          
          $obs = $context->loadObservation($obsId);
          
+	 if($obs===null)
+	  {
+	    break;
+	  }
          $task = 
            TypoherbariumTask::makeComparisonsFinishedTask($obs)
            ->setId($taskId);
@@ -2222,6 +2226,10 @@ implements PersistentUserI,
          
          $obs = $context->loadObservation($obsId);
          
+	 if($obs===null)
+                {
+		  echo $obsId;
+		}
          $task = 
            TypoherbariumTask::makeAddObservationToDeterminationFlowTask($obs)
            ->setId($taskId);
