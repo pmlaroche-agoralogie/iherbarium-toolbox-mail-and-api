@@ -38,7 +38,7 @@ function getFileExtension($fileName)
    $parts=explode(".",$fileName);
    return $parts[count($parts)-1];
 }
-$authorized_ext = array('jpeg','jpg','png','mpo','avi','mpg','raw','mp3');
+$authorized_ext = array('jpeg','jpg','png','mpo','avi','mpg','raw','mp3','mp4');
 
 $debug = 0;
 $mediapath = "fromapi/";
