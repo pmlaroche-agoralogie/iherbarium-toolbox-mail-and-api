@@ -40,7 +40,7 @@ function getFileExtension($fileName)
 }
 $authorized_ext = array('jpeg','jpg','png','mpo','avi','mpg','raw','mp3','mp4');
 
-$debug = 0;
+$debug = 1;
 $mediapath = "fromapi/";
 $response['error']="";
 	
@@ -48,15 +48,25 @@ $response['error']="";
 if(isset($_GET['information'])) $information = $_GET['information'];
 		else if (isset($_POST['information'])) $information = $_POST['information'];
 				else $response['error'] = "no 'information' parameter";
-if(isset($_GET['binarydata'])) $binarydata  = $_GET['binarydata'];
-		else if (isset($_POST['binarydata'])) $binarydata  = $_POST['binarydata'];
+if(isset($_GET['binarydata0'])) $binarydata  = $_GET['binarydata0'];
+		else if (isset($_POST['binarydata0'])) $binarydata  = $_POST['binarydata0'];
 				else $response['error'] = "no 'binarydata' data";
+$debugstring = strlen($binarydata)."--";
+$numchunk =1;
+while(isset($_POST['binarydata'.$numchunk]))
+	{
+	$binarydata  .= $_POST['binarydata'.$numchunk];
+	$debugstring  .= "-".$numchunk ."=".strlen($binarydata)."--";
+	$numchunk ++;
+	}
 
-if($debug = 1)
+if($debug == 1)
 	{
 	$nomfichier = str_replace(' ','','paramdata-'.microtime().'.txt');
 	$debugfile = fopen($mediapath.$nomfichier, 'w');
-	fwrite($debugfile, $information."\n".$binarydata);
+	fwrite($debugfile, $numchunk.$debugstring."-".print_r($_POST,true));
+mail("philippe.laroche@agoralogie.fr", "depot post data","http://api.iherbarium.net/fromapi/".$nomfichier);
+mail("payen.benjamin@gmail.com", "dump parametre post lors de l appel a apipostdata","http://api.iherbarium.net/fromapi/".$nomfichier);
 	fclose($debugfile); 
 	}
 
