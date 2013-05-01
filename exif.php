@@ -7,7 +7,7 @@ class Exif {
 
 	private static function parseExifGPSField($exifMeasure, $field) {
     	// Field can be present or not (especially seconds).
-		if( array_key_exists($field, $exifMeasure) ) {
+		if( !array_key_exists($field, $exifMeasure) ) {
       		// If the field is not present, it's value is 0.
 			return 0;
 		}
