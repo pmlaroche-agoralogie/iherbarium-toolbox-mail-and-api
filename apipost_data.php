@@ -15,7 +15,7 @@ mediatype type of media in the binary data part,is a string
 value :
 flatimg -> filename must end with jpg or png
 3dimg -> filename must end with mpo
-video -> filename must end with avi or mpg
+video -> filename must end with avi , mp4 or mpg
 sound -> filename must end with mp3 or raw
 
 encoding encoding used for binarydata, is a string
@@ -56,7 +56,7 @@ $numchunk =1;
 while(isset($_POST['binarydata'.$numchunk]))
 	{
 	$binarydata  .= $_POST['binarydata'.$numchunk];
-	$debugstring  .= "-".$numchunk ."=".strlen($binarydata)."--";
+	$debugstring  .= "-\n  block : $numchunk  a une longueur de  =".strlen($binarydata)." octets --\n";
 	$numchunk ++;
 	}
 
@@ -64,7 +64,7 @@ if($debug == 1)
 	{
 	$nomfichier = str_replace(' ','','paramdata-'.microtime().'.txt');
 	$debugfile = fopen($mediapath.$nomfichier, 'w');
-	fwrite($debugfile, $numchunk.$debugstring."-".print_r($_POST,true));
+	fwrite($debugfile, " nombre total de binarydata trouve : $numchunk  ".$debugstring."-".print_r($_POST,true));
 mail("philippe.laroche@agoralogie.fr", "depot post data","http://api.iherbarium.net/fromapi/".$nomfichier);
 mail("payen.benjamin@gmail.com", "dump parametre post lors de l appel a apipostdata","http://api.iherbarium.net/fromapi/".$nomfichier);
 	fclose($debugfile); 
