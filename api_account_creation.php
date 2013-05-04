@@ -46,7 +46,8 @@ if($debug = 1)
 	{
 	$nomfichier = 'fromapi/informationdata-'.time().'.txt';
 	$debugfile = fopen($nomfichier, 'w');
-	fwrite($debugfile, $information);
+	fwrite($debugfile, "\n POST = : ".print_r($_POST,true));
+ 	fwrite($debugfile, "\n GET = : ".print_r($_GET,true));
 	fclose($debugfile); 
 	}
 
@@ -80,23 +81,42 @@ if($response['error'] == "")
 				 // Create a new User.
 				 if($call_parameters->password=="")
 				    {// Generate a cool password.
-				    $password = substr(md5($call_parameters->username), 0, 6);
+				    $password = substr(md5("myhiddensalt".$call_parameters->username), 0, 6);
 				    }
 				 else
 				    $password = $call_parameters->password;
-				  
-				  if(isset($call_parameters->name) )
-				    $name = $call_parameters->name;
+				 
+				 if(isset($call_parameters->lastname) )
+				    $mylastname = $call_parameters->lastname;
+				    else
+				    $mylastname = "";
+				 if(isset($call_parameters->avatar) )
+				    $myavatar = $call_parameters->avatar;
+				    else
+				    $myavatar = "";
+				 
+				   
+				 if(isset($call_parameters->firstname) && ($call_parameters->firstname != ""))
+				    {
+				       $myfirstname = $call_parameters->firstname;
+				       $myname = $myfirstname. " ".$mylastname;
+				    }
 				    else
 				    {
+				       $myfirstname = "";
+				       $myname = $mylastname;
+				    }
+				    
+				 if($myname == "" )
+				   {
 				    $left = strpos($call_parameters->username,"@");
 				    if($left <1)
 				       $left=strlen($call_parameters->username);
-				    $name = substr($call_parameters->username,0,$left);
+				    $myname = substr($call_parameters->username,0,$left);
 				    }
 				 // Create the user.
 				 //$localTypoherbarium->createUser($call_parameters->username, $password, $call_parameters->language);
-				 $sql_create_account="insert  INTO `fe_users`  (`username`,`email`, `password`, `name`, `language`,`pid`,`usergroup`) values ( '".$call_parameters->username."','".$call_parameters->username."','".$password."','".$name."','".$call_parameters->language."',2,'1' );";
+				 $sql_create_account="insert  INTO `fe_users`  (`username`,`email`, `password`, `name`, `language`,`first_name`,`last_name`,`www`,`pid`,`usergroup`) values ( '".$call_parameters->username."','".$call_parameters->username."','".$password."','".$myname."','".$call_parameters->language."','".$myfirstname."','".$mylastname."','".$myavatar."',2,'1' );";
 				 
 				 $resultat = mysql_query($sql_create_account) or die ();
 				 $id_user = mysql_insert_id();
