@@ -51,24 +51,22 @@ if(isset($_GET['information'])) $information = $_GET['information'];
 if(isset($_GET['binarydata0'])) $binarydata  = $_GET['binarydata0'];
 		else if (isset($_POST['binarydata0'])) $binarydata  = $_POST['binarydata0'];
 				else $response['error'] = "no 'binarydata' data";
-$debugstring = strlen($binarydata)."--";
+$debugstring = "block : 0  a une longueur de  = ".strlen($binarydata)." octets --\n";
 $numchunk =1;
 while(isset($_POST['binarydata'.$numchunk]))
 	{
 	$binarydata  .= $_POST['binarydata'.$numchunk];
-	$debugstring  .= "-\n  block : $numchunk  a une longueur de  =".strlen($binarydata)." octets --\n";
+	$debugstring  .= "-\n  block : $numchunk  taille ".strlen($_POST['binarydata'.$numchunk])." octets amene a une longueur total de  =".strlen($binarydata)." octets --\n";
 	$numchunk ++;
 	}
 
 if($debug == 1)
-	{
-	$nomfichier = str_replace(' ','','paramdata-'.microtime().'.txt');
-	$debugfile = fopen($mediapath.$nomfichier, 'w');
-	fwrite($debugfile, " nombre total de binarydata trouve : $numchunk  ".$debugstring."-".print_r($_POST,true));
-mail("philippe.laroche@agoralogie.fr", "depot post data","http://api.iherbarium.net/fromapi/".$nomfichier);
-mail("payen.benjamin@gmail.com", "dump parametre post lors de l appel a apipostdata","http://api.iherbarium.net/fromapi/".$nomfichier);
-	fclose($debugfile); 
-	}
+	 {
+	 $nomfichier = str_replace(' ','','paramdata-'.microtime().'.txt');
+	 $debugfile = fopen($mediapath.$nomfichier, 'w');
+	 fwrite($debugfile, " nombre total de binarydata trouve : $numchunk  ".$debugstring."-".print_r($_POST,true));
+	 fclose($debugfile); 
+	 }
 
 if($response['error'] == "")
 		{

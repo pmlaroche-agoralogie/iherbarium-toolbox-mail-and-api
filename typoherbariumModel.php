@@ -343,6 +343,7 @@ extends TransferablePhoto {
       }
     }
 
+
     return $rotationAngle;
   }
 
