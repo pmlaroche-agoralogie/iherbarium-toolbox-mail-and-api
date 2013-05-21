@@ -246,7 +246,8 @@ extends TypoherbariumAnswerableTask {
 			 "id"     => $answerValue,
 			 "chosen" => $chosenTimes,
 			 "asked"  => $askedTimes,
-			 // no probability given if only to unknown persons have given answsers
+			 // no probability given if only two unknown persons have given answsers
+			 // beware if a known user give an answer and a unknow person has given one, the probability can be 90%
 			 "pr"     => ($askedTimes > 2) ? ($chosenTimes / $askedTimes) : 0 ,
 			 "score"  => $chosenTimes - $askedTimes
 			 );
@@ -257,7 +258,7 @@ extends TypoherbariumAnswerableTask {
     $sortedAnswers = $formattedAnswers;
     usort($sortedAnswers, function($a1, $a2) { return cmp($a1["pr"], $a2["pr"]); });
     $sortedAnswers = array_reverse($sortedAnswers);
-
+    
     $ap->answers = $sortedAnswers;
 
     return $ap;
