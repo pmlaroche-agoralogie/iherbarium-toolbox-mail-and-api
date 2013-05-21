@@ -35,6 +35,12 @@ $debug = 0;
 $response['error']="";
 $response['responsevalue']="nok";
 
+function getFileExtension($fileName)
+{
+   $parts=explode(".",$fileName);
+   return $parts[count($parts)-1];
+}
+
 bd_connect();
 
 
@@ -91,7 +97,14 @@ if($response['error'] == "")
 				    else
 				    $mylastname = "";
 				 if(isset($call_parameters->avatar) )
-				    $myavatar = $call_parameters->avatar;
+				    {
+				       $myavatar = substr($call_parameters->avatar,39);
+				       $myavatar = str_replace('..',"",$myavatar); //no path abuse
+				       $filext = getFileExtension($myavatar);
+				       if(!($filext=="jpg" || $filext=="png" ))
+					  die("no image format for avatar");
+				       copy("fromapi/$myavatar","../../htdocs/medias/avatars/$myavatar");
+				    }
 				    else
 				    $myavatar = "";
 				 
