@@ -27,13 +27,15 @@ extends TransferableObservation {
   protected $uid  = NULL;
   
   // Observation meta-data and data.
-  protected $timestamp   = NULL;
-  protected $geolocation = NULL;
-  protected $kind        = NULL;
-  protected $plantSize   = NULL;
-  protected $commentary  = NULL;
-  protected $photos      = array();
-  protected $medias      = array();
+  protected $timestamp     = NULL;
+  protected $geolocation   = NULL;
+  protected $kind          = NULL;
+  protected $plantSize     = NULL;
+  protected $commentary    = NULL;
+  protected $address       = NULL;
+  protected $miscellaneous = NULL;
+  protected $photos        = array();
+  protected $medias        = array();
 
   // Observation settings
   protected $privacy = NULL;
@@ -41,15 +43,17 @@ extends TransferableObservation {
   // Debug printing
   protected function debugStringsArray() {
     $lines   = array();
-    $lines[] = "id: "          . $this->id;
-    $lines[] = "user: "        . $this->user;
-    $lines[] = "uid: "         . $this->uid;
-    $lines[] = "timestamp: "   . $this->timestamp;
-    $lines[] = "geolocation: " . $this->geolocation;
-    $lines[] = "privacy: "     . $this->privacy;
-    $lines[] = "kind: "        . $this->kind;
-    $lines[] = "plantSize: "   . $this->plantSize;
-    $lines[] = "commentary: "  . $this->commentary;
+    $lines[] = "id: "            . $this->id;
+    $lines[] = "user: "          . $this->user;
+    $lines[] = "uid: "           . $this->uid;
+    $lines[] = "timestamp: "     . $this->timestamp;
+    $lines[] = "geolocation: "   . $this->geolocation;
+    $lines[] = "privacy: "       . $this->privacy;
+    $lines[] = "kind: "          . $this->kind;
+    $lines[] = "plantSize: "     . $this->plantSize;
+    $lines[] = "commentary: "    . $this->commentary;
+    $lines[] = "address: "       . $this->address;
+    $lines[] = "miscellaneous: " . "<pre>" . var_export($this->miscellaneous, True)   . "</pre>";
 
     $lines[] = "photos: " . 
     mkString(
@@ -93,6 +97,8 @@ extends TransferableObservation {
     ->setKind(1) // First kind by default.
     ->setPlantSize("")
     ->setCommentary("")
+    ->setAddress("")
+    ->setMiscellaneous(NULL)
     ->setPrivacy("public");
 
     return $obs;
@@ -111,7 +117,9 @@ extends TransferableObservation {
     ->setPrivacy(     isset($obj->privacy    ) ? $obj->privacy    : "public")
     ->setKind(        isset($obj->kind       ) ? $obj->kind       : 1)
     ->setPlantSize(   isset($obj->plantSize  ) ? $obj->plantSize  : "")
-    ->setCommentary(  isset($obj->commentary ) ? $obj->commentary : "");
+    ->setCommentary(  isset($obj->commentary ) ? $obj->commentary : "")
+    ->setAddress(  isset($obj->address ) ? $obj->address : "")
+    ->setMiscellaneous(  isset($obj->miscellaneous ) ? $obj->miscellaneous : NULL);
 
     $obs->setPhotos(
       array_map(

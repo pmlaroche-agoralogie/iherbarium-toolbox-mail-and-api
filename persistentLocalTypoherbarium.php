@@ -186,11 +186,13 @@ implements PersistentUserI,
     // Insert the Observation.
     $insertObsQuery = 
       "INSERT INTO" .
-      " iherba_observations (idobs, id_user, date_depot, commentaires, genre_obs, latitude, longitude, public, taille_plante)" .
+      " iherba_observations (idobs, id_user, date_depot, commentaires,address,miscellaneous, genre_obs, latitude, longitude, public, taille_plante)" .
       " VALUES( " . $context->quote($obs->id) .
       " , " . $context->quote($uid) .
       " , now()" .
       " , " . $context->quote($obs->commentary) .
+      " , " . $context->quote($obs->address) .
+      " , " . $context->quote(json_encode($obs->miscellaneous)) .
       " , " . $context->quote($obs->kind) .
       " , " . $context->quote($obs->geolocation->latitude) .
       " , " . $context->quote($obs->geolocation->longitude) .
@@ -237,6 +239,8 @@ implements PersistentUserI,
 				 " UPDATE iherba_observations" .
 				 " SET" .
 				 "   commentaires = "  . $context->quote($obs->commentary) .
+				 " ,  address = "  . $context->quote($obs->address) .
+				 " ,  miscellaneous = "  . $context->quote(json_encode($obs->miscellaneous)) .
 				 " , genre_obs = "     . $context->quote($obs->kind) .
 				 " , latitude = "      . $context->quote($obs->geolocation->latitude) .
 				 " , longitude = "     . $context->quote($obs->geolocation->longitude) .
@@ -268,7 +272,7 @@ implements PersistentUserI,
 
     // Fetch the Observation.
     $obsQuery =
-      "SELECT idobs, id_user, date_depot, commentaires, genre_obs, latitude, longitude, public, taille_plante" .
+      "SELECT idobs, id_user, date_depot, commentaires,address,miscellaneous, genre_obs, latitude, longitude, public, taille_plante" .
       " FROM iherba_observations" .
       " WHERE idobs = " . $context->quote($obsId);
 
@@ -291,7 +295,9 @@ implements PersistentUserI,
 				 ->setPrivacy     ($row->public === "oui" ? "public" : "private")
 				 ->setKind        ($row->genre_obs)
 				 ->setPlantSize   ($row->taille_plante)
-				 ->setCommentary  ($row->commentaires);
+				 ->setCommentary  ($row->commentaires)
+				 ->setAddress  ($row->address)
+				 ->setMiscellaneous  (json_decode($row->miscellaneous));
       
 			       // Link Photos.
 
