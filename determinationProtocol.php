@@ -457,7 +457,7 @@ implements DeterminationProtocolI {
 
     // Case A : Maybe the top result is super good ?
 
-    $ratioTopSecondNeeded = 0.8;
+    $ratioTopSecondNeeded = 0.95;
     
     $topScore    = $results[0]['weightedSimilarity'];
     $secondScore = $results[1]['weightedSimilarity'];
@@ -491,7 +491,7 @@ implements DeterminationProtocolI {
 
     // Case B : Too many observations in top 5% ?
 
-    $margin = 0.8;
+    $margin = 0.95;
     $marginInPercents = (1 - $margin) * 100;
 
     $minScore = $margin * $topScore;
@@ -535,6 +535,8 @@ implements DeterminationProtocolI {
     echo "<p>Case C: We generate some nice comparisons.</p>";
 
     $minCountObsToCompare = 3;
+    if( $countObsToCompare > 10 )
+      $countObsToCompare=6;
     $countObsToCompare = max($countObsToCompare, $minCountObsToCompare);
 
     $topResults = array_slice($results, 0, $countObsToCompare);
