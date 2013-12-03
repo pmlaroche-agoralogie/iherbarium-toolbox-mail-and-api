@@ -2261,14 +2261,45 @@ implements PersistentUserI,
     
   }
 
-  public function loadNextTask($category = "Answerable") {
+  public function loadNextTask($category = "Answerable",$preference = "") {
 
     // Workaround...
     $context = $this;
      
+    if($preference!='')
+      {
+	// the user want a task on a given observation
+      $wantedObservation = $preference;
+	// Task Query.
+    $taskQuery =
+      "SELECT iherba_task.Id " .
+      " FROM `iherba_task`,iherba_roi,iherba_photos WHERE `Context` = iherba_roi.id and id_photo = idphotos and id_obs = ". $wantedObservation.
+      " ORDER BY RAND()" .
+      " LIMIT 1";
+      //echo $taskQuery;
+      
+      return
+      $context->singleResult(// Query
+			     $taskQuery,
+			  
+			     // If the Task exists...
+			     function($row) use ($context) {
+			       // We fetched the task!
+			       return $context->loadTask($row->id);
+			     },
+
+			     // If the Task doesn't exist...
+			     function() use ($context, $wantedObservation) {
+			       $context->debug("Error", "Task for observation = '$wantedObservation' doesn't exist!");
+			       return NULL;
+			     });
+      
+      
+      }
     // Minimum priority query.
     $minQuery = "SELECT MIN(Priority) AS MinPriority FROM iherba_task";
 
+    
     $minPriority =
       $context->singleResult(// Query
 			     $minQuery,
@@ -2780,6 +2811,8 @@ implements PersistentUserI,
 
   public function loadSimilaritySet($obsId) {
 
+  
+    
     // Workaround...
     $context = $this;
 
@@ -2800,8 +2833,10 @@ implements PersistentUserI,
            },
         
            // If the Similarity Set doesn't exist...
-           function() use ($context) {
-             return NULL;
+           function() use ($context)
+	   {
+	      return json_decode('[{"id":"76","weight":"10"},{"id":"80","weight":"10"},{"id":"84","weight":"10"},{"id":"85","weight":"10"},{"id":"87","weight":"10"},{"id":"92","weight":"10"},{"id":"97","weight":"10"},{"id":"98","weight":"10"},{"id":"99","weight":"10"},{"id":"100","weight":"10"},{"id":"112","weight":"10"},{"id":"114","weight":"10"},{"id":"148","weight":"10"},{"id":"158","weight":"10"},{"id":"161","weight":"10"},{"id":"162","weight":"10"},{"id":"163","weight":"10"},{"id":"164","weight":"10"},{"id":"165","weight":"10"},{"id":"166","weight":"10"},{"id":"167","weight":"10"},{"id":"168","weight":"10"},{"id":"169","weight":"10"},{"id":"170","weight":"10"},{"id":"171","weight":"10"},{"id":"172","weight":"10"},{"id":"173","weight":"10"},{"id":"174","weight":"10"},{"id":"175","weight":"10"},{"id":"176","weight":"10"},{"id":"177","weight":"10"},{"id":"178","weight":"10"},{"id":"179","weight":"10"},{"id":"180","weight":"10"},{"id":"181","weight":"10"},{"id":"182","weight":"10"},{"id":"183","weight":"10"},{"id":"184","weight":"10"},{"id":"185","weight":"10"},{"id":"187","weight":"10"},{"id":"202","weight":"10"},{"id":"203","weight":"10"},{"id":"204","weight":"10"},{"id":"205","weight":"10"},{"id":"206","weight":"10"},{"id":"207","weight":"10"},{"id":"208","weight":"10"},{"id":"210","weight":"10"},{"id":"211","weight":"10"},{"id":"212","weight":"10"},{"id":"213","weight":"10"},{"id":"214","weight":"10"},{"id":"215","weight":"10"},{"id":"217","weight":"10"},{"id":"218","weight":"10"},{"id":"219","weight":"10"},{"id":"220","weight":"10"},{"id":"221","weight":"10"},{"id":"222","weight":"10"},{"id":"223","weight":"10"},{"id":"224","weight":"10"},{"id":"225","weight":"10"},{"id":"226","weight":"10"},{"id":"228","weight":"10"},{"id":"232","weight":"10"},{"id":"233","weight":"10"},{"id":"234","weight":"10"},{"id":"235","weight":"10"},{"id":"236","weight":"10"},{"id":"238","weight":"10"},{"id":"239","weight":"10"},{"id":"240","weight":"10"},{"id":"241","weight":"10"},{"id":"242","weight":"10"},{"id":"243","weight":"10"},{"id":"259","weight":"10"},{"id":"282","weight":"10"},{"id":"283","weight":"10"},{"id":"285","weight":"10"},{"id":"286","weight":"10"},{"id":"287","weight":"10"},{"id":"288","weight":"10"},{"id":"289","weight":"10"},{"id":"290","weight":"10"},{"id":"291","weight":"10"},{"id":"292","weight":"10"},{"id":"293","weight":"10"},{"id":"294","weight":"10"},{"id":"295","weight":"10"},{"id":"296","weight":"10"},{"id":"297","weight":"10"},{"id":"298","weight":"10"},{"id":"299","weight":"10"},{"id":"300","weight":"10"},{"id":"301","weight":"10"},{"id":"302","weight":"10"},{"id":"303","weight":"10"},{"id":"304","weight":"10"},{"id":"305","weight":"10"},{"id":"306","weight":"10"},{"id":"307","weight":"10"},{"id":"308","weight":"10"},{"id":"309","weight":"10"},{"id":"310","weight":"10"},{"id":"311","weight":"10"},{"id":"312","weight":"10"},{"id":"313","weight":"10"},{"id":"314","weight":"10"},{"id":"315","weight":"10"},{"id":"316","weight":"10"},{"id":"317","weight":"10"},{"id":"318","weight":"10"},{"id":"319","weight":"10"},{"id":"320","weight":"10"},{"id":"321","weight":"10"},{"id":"322","weight":"10"},{"id":"323","weight":"10"},{"id":"324","weight":"10"},{"id":"325","weight":"10"},{"id":"326","weight":"10"},{"id":"327","weight":"10"},{"id":"328","weight":"10"},{"id":"329","weight":"10"},{"id":"330","weight":"10"},{"id":"331","weight":"10"},{"id":"332","weight":"10"},{"id":"333","weight":"10"},{"id":"334","weight":"10"},{"id":"335","weight":"10"},{"id":"336","weight":"10"},{"id":"337","weight":"10"},{"id":"338","weight":"10"},{"id":"339","weight":"10"},{"id":"340","weight":"10"},{"id":"341","weight":"10"},{"id":"342","weight":"10"},{"id":"343","weight":"10"},{"id":"344","weight":"10"},{"id":"345","weight":"10"},{"id":"346","weight":"10"},{"id":"347","weight":"10"},{"id":"348","weight":"10"},{"id":"349","weight":"10"},{"id":"350","weight":"10"},{"id":"351","weight":"10"},{"id":"353","weight":"10"},{"id":"354","weight":"10"},{"id":"355","weight":"10"},{"id":"356","weight":"10"},{"id":"357","weight":"10"},{"id":"358","weight":"10"},{"id":"359","weight":"10"},{"id":"360","weight":"10"},{"id":"361","weight":"10"},{"id":"362","weight":"10"},{"id":"363","weight":"10"},{"id":"364","weight":"10"},{"id":"365","weight":"10"},{"id":"366","weight":"10"},{"id":"367","weight":"10"},{"id":"368","weight":"10"},{"id":"369","weight":"10"},{"id":"370","weight":"10"},{"id":"371","weight":"10"},{"id":"372","weight":"10"},{"id":"373","weight":"10"},{"id":"374","weight":"10"},{"id":"376","weight":"10"},{"id":"377","weight":"10"},{"id":"378","weight":"10"},{"id":"380","weight":"10"},{"id":"381","weight":"10"},{"id":"382","weight":"10"},{"id":"383","weight":"10"},{"id":"384","weight":"10"},{"id":"385","weight":"10"},{"id":"386","weight":"10"},{"id":"387","weight":"10"},{"id":"388","weight":"10"},{"id":"389","weight":"10"},{"id":"390","weight":"10"},{"id":"391","weight":"10"},{"id":"392","weight":"10"},{"id":"393","weight":"10"},{"id":"394","weight":"10"},{"id":"395","weight":"10"},{"id":"396","weight":"10"},{"id":"398","weight":"10"},{"id":"399","weight":"10"},{"id":"400","weight":"10"},{"id":"401","weight":"10"},{"id":"402","weight":"10"},{"id":"403","weight":"10"},{"id":"404","weight":"10"},{"id":"405","weight":"10"},{"id":"406","weight":"10"},{"id":"408","weight":"10"},{"id":"409","weight":"10"},{"id":"410","weight":"10"},{"id":"411","weight":"10"},{"id":"412","weight":"10"},{"id":"413","weight":"10"},{"id":"414","weight":"10"},{"id":"415","weight":"10"},{"id":"416","weight":"10"},{"id":"418","weight":"10"},{"id":"419","weight":"10"},{"id":"420","weight":"10"},{"id":"421","weight":"10"},{"id":"422","weight":"10"},{"id":"423","weight":"10"},{"id":"424","weight":"10"},{"id":"425","weight":"10"},{"id":"426","weight":"10"},{"id":"427","weight":"10"},{"id":"428","weight":"10"},{"id":"429","weight":"10"},{"id":"430","weight":"10"},{"id":"431","weight":"10"},{"id":"432","weight":"10"},{"id":"433","weight":"10"},{"id":"434","weight":"10"},{"id":"435","weight":"10"},{"id":"436","weight":"10"},{"id":"437","weight":"10"},{"id":"438","weight":"10"},{"id":"439","weight":"10"},{"id":"441","weight":"10"},{"id":"442","weight":"10"},{"id":"443","weight":"10"},{"id":"444","weight":"10"},{"id":"445","weight":"10"},{"id":"446","weight":"10"},{"id":"447","weight":"10"},{"id":"448","weight":"10"},{"id":"449","weight":"10"},{"id":"450","weight":"10"},{"id":"451","weight":"10"},{"id":"452","weight":"10"},{"id":"453","weight":"10"},{"id":"454","weight":"10"},{"id":"455","weight":"10"},{"id":"456","weight":"10"},{"id":"457","weight":"10"},{"id":"458","weight":"10"},{"id":"459","weight":"10"},{"id":"460","weight":"10"},{"id":"461","weight":"10"},{"id":"463","weight":"10"},{"id":"464","weight":"10"},{"id":"465","weight":"10"},{"id":"466","weight":"10"},{"id":"467","weight":"10"},{"id":"468","weight":"10"},{"id":"469","weight":"10"},{"id":"470","weight":"10"},{"id":"471","weight":"10"},{"id":"472","weight":"10"},{"id":"473","weight":"10"},{"id":"474","weight":"10"},{"id":"475","weight":"10"},{"id":"476","weight":"10"},{"id":"477","weight":"10"},{"id":"478","weight":"10"},{"id":"479","weight":"10"},{"id":"480","weight":"10"},{"id":"481","weight":"10"},{"id":"482","weight":"10"},{"id":"483","weight":"10"},{"id":"484","weight":"10"},{"id":"485","weight":"10"},{"id":"486","weight":"10"},{"id":"487","weight":"10"},{"id":"488","weight":"10"},{"id":"489","weight":"10"},{"id":"490","weight":"10"},{"id":"491","weight":"10"},{"id":"492","weight":"10"},{"id":"493","weight":"10"},{"id":"583","weight":"10"},{"id":"589","weight":"10"},{"id":"597","weight":"10"},{"id":"633","weight":"10"},{"id":"638","weight":"10"},{"id":"666","weight":"10"},{"id":"670","weight":"10"},{"id":"673","weight":"10"},{"id":"694","weight":"10"},{"id":"699","weight":"10"},{"id":"700","weight":"10"},{"id":"753","weight":"10"},{"id":"772","weight":"10"},{"id":"783","weight":"10"},{"id":"793","weight":"10"},{"id":"795","weight":"10"},{"id":"809","weight":"10"},{"id":"810","weight":"10"},{"id":"813","weight":"10"},{"id":"816","weight":"10"},{"id":"818","weight":"10"},{"id":"823","weight":"10"},{"id":"826","weight":"10"},{"id":"844","weight":"10"},{"id":"850","weight":"10"},{"id":"851","weight":"10"},{"id":"866","weight":"10"},{"id":"867","weight":"10"},{"id":"870","weight":"10"},{"id":"883","weight":"10"},{"id":"890","weight":"10"},{"id":"897","weight":"10"},{"id":"918","weight":"10"},{"id":"921","weight":"10"},{"id":"923","weight":"10"},{"id":"943","weight":"10"},{"id":"950","weight":"10"},{"id":"992","weight":"10"},{"id":"1002","weight":"10"},{"id":"1025","weight":"10"},{"id":"1028","weight":"10"},{"id":"1029","weight":"10"},{"id":"1109","weight":"10"},{"id":"1110","weight":"10"},{"id":"1125","weight":"10"},{"id":"1148","weight":"10"},{"id":"1164","weight":"10"},{"id":"1171","weight":"10"},{"id":"1209","weight":"10"},{"id":"1230","weight":"10"},{"id":"1242","weight":"10"},{"id":"1244","weight":"10"},{"id":"1252","weight":"10"},{"id":"1253","weight":"10"},{"id":"1266","weight":"10"},{"id":"1270","weight":"10"},{"id":"1303","weight":"10"},{"id":"1305","weight":"10"},{"id":"1311","weight":"10"},{"id":"1328","weight":"10"},{"id":"1342","weight":"10"},{"id":"1348","weight":"10"},{"id":"1353","weight":"10"},{"id":"1359","weight":"10"},{"id":"1367","weight":"10"},{"id":"1387","weight":"10"},{"id":"1389","weight":"10"},{"id":"1394","weight":"10"},{"id":"1417","weight":"10"},{"id":"1426","weight":"10"},{"id":"1431","weight":"10"},{"id":"1434","weight":"10"},{"id":"1450","weight":"10"},{"id":"1460","weight":"10"},{"id":"1464","weight":"10"},{"id":"1467","weight":"10"},{"id":"1477","weight":"10"},{"id":"1484","weight":"10"},{"id":"1485","weight":"10"},{"id":"1489","weight":"10"},{"id":"1505","weight":"10"},{"id":"1508","weight":"10"},{"id":"1512","weight":"10"},{"id":"1513","weight":"10"},{"id":"1516","weight":"10"},{"id":"1518","weight":"10"},{"id":"1526","weight":"10"},{"id":"1531","weight":"10"},{"id":"1543","weight":"10"},{"id":"1546","weight":"10"},{"id":"1550","weight":"10"},{"id":"1558","weight":"10"},{"id":"1643","weight":"10"},{"id":"1834","weight":"10"},{"id":"1869","weight":"10"},{"id":"1870","weight":"10"},{"id":"1886","weight":"10"},{"id":"1925","weight":"10"},{"id":"1944","weight":"10"},{"id":"2599","weight":"10"}]');
+             //OLD KUBreturn NULL;
            }); 
 
   }

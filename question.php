@@ -288,8 +288,8 @@ class QuestionView {
   public function viewQuestion(ClosedChoiceQuestionI $q, TypoherbariumROI $context, TypoherbariumROIQuestionViewSkinI $x, $options = array()) {
 
     $options = array_merge($this->defaultOptions, $options);
-    if($_SERVER['REMOTE_ADDR']=='94.23.195.65')
-	$xmlgeneration = 1; else $xmlgeneration = 0;
+    //if($_SERVER['REMOTE_ADDR']=='94.23.195.65') $xmlgeneration = 1; else
+    $xmlgeneration = 0;
     $content = '';
 
     // iHerbarium logo.
@@ -379,12 +379,23 @@ else
       $source = $_GET['answeringuser'];
     else                             
       $source = "network";
-      
+    
+     if( isset($_GET['obsId']) ||  isset($_POST['obsId'])  )
+      {
+	if(isset($_GET['obsId']))
+	  $obsId = $_GET['obsId'];
+	else
+	  $obsId = $_POST['obsId'];
+      }
+      else
+      $obsId=0;
+    
     //folowing call from a submited form
     if(isset($_POST['source']))
       $source = $_POST['source'];
       
-if($xmlgeneration==0) 
+//if($xmlgeneration==0)
+
     $content .=
       '<form  id="questionForm' . $q->getAskLog()->id . '" method="post" action="?thisIsAnswer=1" enctype="multipart/form-data">' .
       '<input type="hidden" name="questionType" value="' . $q->getType() . '" />' .
@@ -392,8 +403,11 @@ if($xmlgeneration==0)
       '<input type="hidden" name="context"      value="' . $roi->id . '">' .
       '<input type="hidden" name="askId"        value="' . $q->getAskLog()->id . '" />' .
       '<input type="hidden" name="referrant" 	value="'.$referrant.'">'.      
-      '<input type="hidden" name="source"     value="'.$source.'">'.
-      '<input type="hidden" name="answerValue"  value="noAnswer" id="hiddenAnswer' . $q->getAskLog()->id . '" />' .
+      '<input type="hidden" name="source"     value="'.$source.'">';
+      if($obsId)
+	$content .= '<input type="hidden" name="obsId"     value="'.$obsId.'">';
+      
+      $content .='<input type="hidden" name="answerValue"  value="noAnswer" id="hiddenAnswer' . $q->getAskLog()->id . '" />' .
 
       '</form>';
 
