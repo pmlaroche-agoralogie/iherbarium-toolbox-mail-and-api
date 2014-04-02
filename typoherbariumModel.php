@@ -33,6 +33,9 @@ extends TransferableObservation {
   protected $plantSize     = NULL;
   protected $commentary    = NULL;
   protected $address       = NULL;
+  protected $personnalRef = NULL;
+  protected $hasSpecimen  = NULL;
+  protected $specimenDescription      = NULL;
   protected $miscellaneous = NULL;
   protected $photos        = array();
   protected $medias        = array();
@@ -119,6 +122,9 @@ extends TransferableObservation {
     ->setPlantSize(   isset($obj->plantSize  ) ? $obj->plantSize  : "")
     ->setCommentary(  isset($obj->commentary ) ? $obj->commentary : "")
     ->setAddress(  isset($obj->address ) ? $obj->address : "")
+    ->setPersonnalRef(  isset($obj->personnalRef ) ? $obj->personnalRef : "")
+    ->setHasSpecimen(  isset($obj->hasSpecimen ) ? $obj->hasSpecimen : "")
+    ->setSpecimenDescription(  isset($obj->specimenDescription ) ? $obj->specimenDescription : "")
     ->setMiscellaneous(  isset($obj->miscellaneous ) ? $obj->miscellaneous : NULL);
 
     $obs->setPhotos(

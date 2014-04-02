@@ -186,7 +186,7 @@ implements PersistentUserI,
     // Insert the Observation.
     $insertObsQuery = 
       "INSERT INTO" .
-      " iherba_observations (idobs, id_user, date_depot, commentaires,address,miscellaneous, genre_obs, latitude, longitude, public, taille_plante)" .
+      " iherba_observations (idobs, id_user, date_depot, commentaires,address,miscellaneous, genre_obs, latitude, longitude, public, taille_plante,specimen_description)" .
       " VALUES( " . $context->quote($obs->id) .
       " , " . $context->quote($uid) .
       " , now()" .
@@ -197,7 +197,8 @@ implements PersistentUserI,
       " , " . $context->quote($obs->geolocation->latitude) .
       " , " . $context->quote($obs->geolocation->longitude) .
       " , " . $context->quote( ($obs->privacy === "public" ? "oui" : "semi" ) ) .
-      " , " . $context->quote($obs->plantSize) . 
+      " , " . $context->quote($obs->plantSize) .
+       " , '' ". 
       " )";
       
     $affectedObs = $context->exec($insertObsQuery);
@@ -238,8 +239,11 @@ implements PersistentUserI,
 			       $updateObsQuery = 
 				 " UPDATE iherba_observations" .
 				 " SET" .
-				 "   commentaires = "  . $context->quote($obs->commentary) .
-				 " ,  address = "  . $context->quote($obs->address) .
+				 "  commentaires = "  . $context->quote($obs->commentary) .
+				 " , address = "  . $context->quote($obs->address) .
+				 " , personnal_ref = "  . $context->quote($obs->personnalRef) .
+				 " , has_specimen = "  . $context->quote($obs->hasSpecimen) .
+				 " , specimen_description = "  . $context->quote($obs->specimenDescription) .
 				 " ,  miscellaneous = "  . $context->quote(json_encode($obs->miscellaneous)) .
 				 " , genre_obs = "     . $context->quote($obs->kind) .
 				 " , latitude = "      . $context->quote($obs->geolocation->latitude) .
@@ -272,7 +276,7 @@ implements PersistentUserI,
 
     // Fetch the Observation.
     $obsQuery =
-      "SELECT idobs, id_user, date_depot, commentaires,address,miscellaneous, genre_obs, latitude, longitude, public, taille_plante" .
+      "SELECT idobs, id_user, date_depot, commentaires,address,personnal_ref,has_specimen,specimen_description,miscellaneous, genre_obs, latitude, longitude, public, taille_plante" .
       " FROM iherba_observations" .
       " WHERE idobs = " . $context->quote($obsId);
 
@@ -297,6 +301,9 @@ implements PersistentUserI,
 				 ->setPlantSize   ($row->taille_plante)
 				 ->setCommentary  ($row->commentaires)
 				 ->setAddress  ($row->address)
+				 ->setPersonnalRef  ($row->personnal_ref)
+				 ->setHasSpecimen  ($row->has_specimen)
+				 ->setSpecimenDescription  ($row->specimen_description)
 				 ->setMiscellaneous  (json_decode($row->miscellaneous));
       
 			       // Link Photos.
